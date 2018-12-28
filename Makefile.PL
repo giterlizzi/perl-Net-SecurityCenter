@@ -9,6 +9,7 @@ WriteMakefile(
     ABSTRACT_FROM    => 'lib/Net/SecurityCenter.pm',
     LICENSE          => 'artistic_2',
     EXE_FILES        => [],
+    MIN_PERL_VERSION => 5.008,
     PL_FILES         => {},
     CONFIGURE_REQUIRES => {
         'ExtUtils::MakeMaker' => '0',
