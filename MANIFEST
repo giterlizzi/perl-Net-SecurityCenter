@@ -1,3 +1,5 @@
+Changes
+INSTALL.md
 lib/Net/SecurityCenter.pm
 lib/Net/SecurityCenter/REST.pm
 LICENSE
@@ -5,6 +7,7 @@ Makefile.PL
 MANIFEST			This list of files
 MYMETA.json
 MYMETA.yml
+README.md
 t/00-load.t
 t/10-rest.t
 t/manifest.t
