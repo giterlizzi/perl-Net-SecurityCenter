@@ -1,24 +1,24 @@
-# Net::SecurityCenter::API::Policy
+# Net::SecurityCenter::API::Credential
 # NAME
 
-Net::SecurityCenter::API::Policy - Perl interface to Tenable.sc (SecurityCenter) Policy REST API
+Net::SecurityCenter::API::Credential - Perl interface to Tenable.sc (SecurityCenter) Credential REST API
 
 # SYNOPSIS
 
     use Net::SecurityCenter::REST;
-    use Net::SecurityCenter::API::Policy;
+    use Net::SecurityCenter::API::Credential;
 
     my $sc = Net::SecurityCenter::REST->new('sc.example.org');
 
     $sc->login('secman', 'password');
 
-    my $api = Net::SecurityCenter::API::Policy->new($sc);
+    my $api = Net::SecurityCenter::API::Credential->new($sc);
 
     $sc->logout();
 
 # DESCRIPTION
 
-This module provides Perl scripts easy way to interface the Policy REST API of Tenable.sc
+This module provides Perl scripts easy way to interface the Credential REST API of Tenable.sc
 (SecurityCenter).
 
 For more information about the Tenable.sc (SecurityCenter) REST API follow the online documentation:
@@ -27,32 +27,28 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 # CONSTRUCTOR
 
-## Net::SecurityCenter::API::Policy->new ( $rest )
+## Net::SecurityCenter::API::Credential->new ( $rest )
 
-Create a new instance of **Net::SecurityCenter::API::Policy** using [Net::SecurityCenter::REST](net-securitycenter-rest.md) class.
+Create a new instance of **Net::SecurityCenter::API::Credential** using [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class.
 
 # METHODS
 
 ## list
 
-Get list of policies.
+Get the list of credentials.
+
+Params:
+
+- `fields` : List of fields
 
 ## get
 
-Gets the policy associated with `id` param.
+Get the credential associated with `id`.
 
 Params:
 
-- `id`: Policy ID
-
-## download
-
-Download the policy XML associated with `id` param.
-
-Params:
-
-- `id`: Policy ID
-- `filename`: Path of file (optional)
+- `id` : Credential ID
+- `fields` : List of fields
 
 # SUPPORT
 

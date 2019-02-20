@@ -1,24 +1,24 @@
-# Net::SecurityCenter::API::PluginFamily
+# Net::SecurityCenter::API::Zone
 # NAME
 
-Net::SecurityCenter::API::PluginFamily - Perl interface to Tenable.sc (SecurityCenter) Plugin Family REST API
+Net::SecurityCenter::API::Zone - Perl interface to Tenable.sc (SecurityCenter) Zone REST API
 
 # SYNOPSIS
 
     use Net::SecurityCenter::REST;
-    use Net::SecurityCenter::API::PluginFamily;
+    use Net::SecurityCenter::API::Zone;
 
     my $sc = Net::SecurityCenter::REST->new('sc.example.org');
 
     $sc->login('secman', 'password');
 
-    my $api = Net::SecurityCenter::API::PluginFamily->new($sc);
+    my $api = Net::SecurityCenter::API::Zone->new($sc);
 
     $sc->logout();
 
 # DESCRIPTION
 
-This module provides Perl scripts easy way to interface the Plugin Family REST API of Tenable.sc
+This module provides Perl scripts easy way to interface the Zone REST API of Tenable.sc
 (SecurityCenter).
 
 For more information about the Tenable.sc (SecurityCenter) REST API follow the online documentation:
@@ -27,23 +27,19 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 # CONSTRUCTOR
 
-## Net::SecurityCenter::API::PluginFamily->new ( $rest )
+## Net::SecurityCenter::API::Zone->new ( $rest )
 
-Create a new instance of **Net::SecurityCenter::API::PluginFamily** using [Net::SecurityCenter::REST](net-securitycenter-rest.md) class.
+Create a new instance of **Net::SecurityCenter::API::Zone** using [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class.
 
 # METHODS
 
-## list
+## list ( \[ %params \] )
 
-Get list of Nessus Plugin Family.
+Get the scan zone list.
 
-## get
+## get ( $zone\_id \[, $fields \] )
 
-Get information about Nessus Plugin Family.
-
-## list\_plugins
-
-Get list of Nessus Plugins associated with Nessus Plugin Family.
+Get the scan zone associated with `zone_id`.
 
 # SUPPORT
 

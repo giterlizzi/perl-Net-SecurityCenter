@@ -28,7 +28,7 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 ## Net::SecurityCenter->new ( host \[, $params \] )
 
-Create a new instance of **Net::Security::Center** using [Net::SecurityCenter::REST](net-securitycenter-rest.md) class.
+Create a new instance of **Net::Security::Center** using [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class.
 
 Params:
 
@@ -43,7 +43,7 @@ the REST request and response messages.
 
 ## $sc->rest ()
 
-Return the instance of [Net::SecurityCenter::REST](net-securitycenter-rest.md) class
+Return the instance of [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class
 
 ## $sc->login ( $username, $password )
 
@@ -57,63 +57,63 @@ Logout from SecurityCenter.
 
 ## analysis
 
-Return [Net::SecurityCenter::API::Analisys](net-securitycenter-api-analisys.md) instance.
+Return [Net::SecurityCenter::API::Analisys](Net-SecurityCenter-API-Analisys.md) instance.
 
 ## credential
 
-Return [Net::SecurityCenter::API::Credential](net-securitycenter-api-credential.md) instance.
+Return [Net::SecurityCenter::API::Credential](Net-SecurityCenter-API-Credential.md) instance.
 
 ## feed
 
-Return [Net::SecurityCenter::API::Feed](net-securitycenter-api-feed.md) instance.
+Return [Net::SecurityCenter::API::Feed](Net-SecurityCenter-API-Feed.md) instance.
 
 ## file
 
-Return [Net::SecurityCenter::API::File](net-securitycenter-api-file.md) instance.
+Return [Net::SecurityCenter::API::File](Net-SecurityCenter-API-File.md) instance.
 
 ## plugin
 
-Return [Net::SecurityCenter::API::Plugin](net-securitycenter-api-plugin.md) instance.
+Return [Net::SecurityCenter::API::Plugin](Net-SecurityCenter-API-Plugin.md) instance.
 
 ## plugin\_family
 
-Return [Net::SecurityCenter::API::PluginFamily](net-securitycenter-api-pluginfamily.md) instance.
+Return [Net::SecurityCenter::API::PluginFamily](Net-SecurityCenter-API-PluginFamily.md) instance.
 
 ## policy
 
-Return [Net::SecurityCenter::API::Policy](net-securitycenter-api-policy.md) instance.
+Return [Net::SecurityCenter::API::Policy](Net-SecurityCenter-API-Policy.md) instance.
 
 ## report
 
-Return [Net::SecurityCenter::API::Report](net-securitycenter-api-report.md) instance.
+Return [Net::SecurityCenter::API::Report](Net-SecurityCenter-API-Report.md) instance.
 
 ## repository
 
-Return [Net::SecurityCenter::API::Repository](net-securitycenter-api-repository.md) instance.
+Return [Net::SecurityCenter::API::Repository](Net-SecurityCenter-API-Repository.md) instance.
 
 ## scan
 
-Return [Net::SecurityCenter::API::Scan](net-securitycenter-api-scan.md) instance.
+Return [Net::SecurityCenter::API::Scan](Net-SecurityCenter-API-Scan.md) instance.
 
 ## scan\_result
 
-Return [Net::SecurityCenter::API::ScanResult](net-securitycenter-api-scanresult.md) instance.
+Return [Net::SecurityCenter::API::ScanResult](Net-SecurityCenter-API-ScanResult.md) instance.
 
 ## scanner
 
-Return [Net::SecurityCenter::API::Scanner](net-securitycenter-api-scanner.md) instance.
+Return [Net::SecurityCenter::API::Scanner](Net-SecurityCenter-API-Scanner.md) instance.
 
 ## system
 
-Return [Net::SecurityCenter::API::System](net-securitycenter-api-system.md) instance.
+Return [Net::SecurityCenter::API::System](Net-SecurityCenter-API-System.md) instance.
 
 ## user
 
-Return [Net::SecurityCenter::API::User](net-securitycenter-api-user.md) instance.
+Return [Net::SecurityCenter::API::User](Net-SecurityCenter-API-User.md) instance.
 
 ## zone
 
-Return [Net::SecurityCenter::API::Zone](net-securitycenter-api-zone.md) instance.
+Return [Net::SecurityCenter::API::Zone](Net-SecurityCenter-API-Zone.md) instance.
 
 # SUPPORT
 

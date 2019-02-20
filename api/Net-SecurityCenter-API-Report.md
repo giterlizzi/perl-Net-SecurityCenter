@@ -1,24 +1,24 @@
-# Net::SecurityCenter::API::System
+# Net::SecurityCenter::API::Report
 # NAME
 
-Net::SecurityCenter::API::System - Perl interface to Tenable.sc (SecurityCenter) System REST API
+Net::SecurityCenter::API::Report - Perl interface to Tenable.sc (SecurityCenter) Report REST API
 
 # SYNOPSIS
 
     use Net::SecurityCenter::REST;
-    use Net::SecurityCenter::API::System;
+    use Net::SecurityCenter::API::Report;
 
     my $sc = Net::SecurityCenter::REST->new('sc.example.org');
 
     $sc->login('secman', 'password');
 
-    my $api = Net::SecurityCenter::API::System->new($sc);
+    my $api = Net::SecurityCenter::API::Report->new($sc);
 
     $sc->logout();
 
 # DESCRIPTION
 
-This module provides Perl scripts easy way to interface the System REST API of Tenable.sc
+This module provides Perl scripts easy way to interface the Report REST API of Tenable.sc
 (SecurityCenter).
 
 For more information about the Tenable.sc (SecurityCenter) REST API follow the online documentation:
@@ -27,35 +27,25 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 # CONSTRUCTOR
 
-## Net::SecurityCenter::API::System->new ( $rest )
+## Net::SecurityCenter::API::Report->new ( $rest )
 
-Create a new instance of **Net::SecurityCenter::API::System** using [Net::SecurityCenter::REST](net-securitycenter-rest.md) class.
+Create a new instance of **Net::SecurityCenter::API::Report** using [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class.
 
 # METHODS
 
-## get\_status
+## list ( \[ $fields \] )
 
-Gets a collection of status information, including license.
+Gets the list of reports.
 
-## get\_info
+## get ( $report\_id \[, $fields \])
 
-Gets the system initialization information.
+Gets the report associated with `report_id`.
 
-## get\_diagnostics\_info
+## download ( $report\_id \[, $filename \] )
 
-Gets the system diagnostics information.
+Download the report associated with `report_id`.
 
-## generate\_diagnostics\_app\_status
-
-Starts an on-demand, diagnostics analysis for the System that can be downloaded after its job completes.
-
-## generate\_diagnostics\_file
-
-Starts an on-demand, diagnostics analysis for the System that can be downloaded after its job completes.
-
-## download\_diagnostics
-
-Downloads the system diagnostics, debug file that was last generated.
+    $report->download(1337, '/tmp/report.pdf');
 
 # SUPPORT
 

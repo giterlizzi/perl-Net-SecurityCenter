@@ -28,7 +28,7 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 ## Net::SecurityCenter::REST->new ( host \[, $params \] )
 
-Create a new instance of [Net::SecurityCenter::REST](net-securitycenter-rest.md).
+Create a new instance of [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md).
 
 Params:
 

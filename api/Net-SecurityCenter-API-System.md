@@ -1,24 +1,24 @@
-# Net::SecurityCenter::API::Credential
+# Net::SecurityCenter::API::System
 # NAME
 
-Net::SecurityCenter::API::Credential - Perl interface to Tenable.sc (SecurityCenter) Credential REST API
+Net::SecurityCenter::API::System - Perl interface to Tenable.sc (SecurityCenter) System REST API
 
 # SYNOPSIS
 
     use Net::SecurityCenter::REST;
-    use Net::SecurityCenter::API::Credential;
+    use Net::SecurityCenter::API::System;
 
     my $sc = Net::SecurityCenter::REST->new('sc.example.org');
 
     $sc->login('secman', 'password');
 
-    my $api = Net::SecurityCenter::API::Credential->new($sc);
+    my $api = Net::SecurityCenter::API::System->new($sc);
 
     $sc->logout();
 
 # DESCRIPTION
 
-This module provides Perl scripts easy way to interface the Credential REST API of Tenable.sc
+This module provides Perl scripts easy way to interface the System REST API of Tenable.sc
 (SecurityCenter).
 
 For more information about the Tenable.sc (SecurityCenter) REST API follow the online documentation:
@@ -27,28 +27,35 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 # CONSTRUCTOR
 
-## Net::SecurityCenter::API::Credential->new ( $rest )
+## Net::SecurityCenter::API::System->new ( $rest )
 
-Create a new instance of **Net::SecurityCenter::API::Credential** using [Net::SecurityCenter::REST](net-securitycenter-rest.md) class.
+Create a new instance of **Net::SecurityCenter::API::System** using [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class.
 
 # METHODS
 
-## list
+## get\_status
 
-Get the list of credentials.
+Gets a collection of status information, including license.
 
-Params:
+## get\_info
 
-- `fields` : List of fields
+Gets the system initialization information.
 
-## get
+## get\_diagnostics\_info
 
-Get the credential associated with `id`.
+Gets the system diagnostics information.
 
-Params:
+## generate\_diagnostics\_app\_status
 
-- `id` : Credential ID
-- `fields` : List of fields
+Starts an on-demand, diagnostics analysis for the System that can be downloaded after its job completes.
+
+## generate\_diagnostics\_file
+
+Starts an on-demand, diagnostics analysis for the System that can be downloaded after its job completes.
+
+## download\_diagnostics
+
+Downloads the system diagnostics, debug file that was last generated.
 
 # SUPPORT
 

@@ -1,51 +1,57 @@
-# Net::SecurityCenter::API::Report
+# Net::SecurityCenter::API::Scanner
 # NAME
 
-Net::SecurityCenter::API::Report - Perl interface to Tenable.sc (SecurityCenter) Report REST API
+Net::SecurityCenter::API::Scanner - Perl interface to Tenable.sc (SecurityCenter) Scanner REST API
 
 # SYNOPSIS
 
     use Net::SecurityCenter::REST;
-    use Net::SecurityCenter::API::Report;
+    use Net::SecurityCenter::API::Scanner;
 
     my $sc = Net::SecurityCenter::REST->new('sc.example.org');
 
     $sc->login('secman', 'password');
 
-    my $api = Net::SecurityCenter::API::Report->new($sc);
+    my $api = Net::SecurityCenter::API::Scanner->new($sc);
 
     $sc->logout();
 
 # DESCRIPTION
 
-This module provides Perl scripts easy way to interface the Report REST API of Tenable.sc
+This module provides Perl scripts easy way to interface the Scanner REST API of Tenable.sc
 (SecurityCenter).
 
 For more information about the Tenable.sc (SecurityCenter) REST API follow the online documentation:
 
 [https://docs.tenable.com/sccv/api/index.html](https://docs.tenable.com/sccv/api/index.html)
 
+# FUNCTIONS
+
+## decode\_nessus\_scanner\_status ( $status\_int )
+
+Decode Nessus scanner status.
+
+    print decode_scanner_status(16384); #  Scanner disabled by user
+
 # CONSTRUCTOR
 
-## Net::SecurityCenter::API::Report->new ( $rest )
+## Net::SecurityCenter::API::Scanner->new ( $rest )
 
-Create a new instance of **Net::SecurityCenter::API::Report** using [Net::SecurityCenter::REST](net-securitycenter-rest.md) class.
+Create a new instance of **Net::SecurityCenter::API::Scanner** using [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class.
 
 # METHODS
 
-## list ( \[ $fields \] )
+## list
 
-Gets the list of reports.
+Get the scanner list.
 
-## get ( $report\_id \[, $fields \])
+## get
 
-Gets the report associated with `report_id`.
+Get the scanner associated with `id`.
 
-## download ( $report\_id \[, $filename \] )
+## get\_status
 
-Download the report associated with `report_id`.
-
-    $report->download(1337, '/tmp/report.pdf');
+Get the decoded scanner status associated with `scanner_id`.
 
 # SUPPORT
 
