@@ -144,9 +144,9 @@ Params:
     - `individual`
     - `cumulative`
     - `patched`
-- `view` : View type (see `$sc->get( view =` ... )> for allowed values)
+- `view` : View type (see `$sc->get( view => ... )` for allowed values)
 - `scan_id` : Scan ID
-- `tool` : Tool (see `$sc->get( tool =` ... )> for allowed params)
+- `tool` : Tool (see `$sc->get( tool => ... )` for allowed params)
 - `page` : Number of page for pagination
 - `limit` : Number of items (default is `1000`)
 - `filters` : Filter array for _field_, _operator_ and _value_ (eg. `[ 'ip', '=', '10.10.0.0/16' ]`)
@@ -165,7 +165,7 @@ Params:
 - `source` : Type of source
     - `lce`
     - `archive`
-- `view` : View type (see `$sc->get( view =` ... )> for allowed values)
+- `view` : View type (see `$sc->get( view => ... )` for allowed values)
 - `lce_id` : LCE ID
 - `tool` : Tool
     - `listdata`
