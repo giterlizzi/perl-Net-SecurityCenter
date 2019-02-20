@@ -165,7 +165,7 @@ Params:
 - `source` : Type of source
     - `lce`
     - `archive`
-- `view` : View type (see `$sc->get` for allowed params)
+- `view` : View type (see `$sc->get` for allowed values)
 - `lce_id` : LCE ID
 - `tool` : Tool
     - `listdata`
