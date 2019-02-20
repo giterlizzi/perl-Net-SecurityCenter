@@ -1,0 +1,173 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Net::SecurityCenter;
+
+use Getopt::Long qw( :config gnu_compat );
+use Pod::Usage;
+use Cwd;
+use Term::ReadKey;
+use JSON;
+
+use Data::Dumper;
+
+our $VERSION = '0.100_10';
+
+my $options = {};
+
+GetOptions(
+
+    $options,
+
+    'help|h',
+    'man',
+    'version',
+
+    'hostname=s',
+    'username=s',
+    'password=s',
+
+    'format|f=s',
+    'fields=s',
+
+    'method=s',
+    'path=s',
+    'params=s',
+
+);
+
+pod2usage(1) if ( $options->{'help'} );
+
+pod2usage( -exitstatus => 0, -verbose => 2 ) if ( $options->{'man'} );
+pod2usage( -exitstatus => 0, -verbose => 0 ) if ( !$options->{'hostname'} || !$options->{'username'} );
+
+$options->{'format'} ||= 'json';
+$options->{'params'} ||= '{}';
+
+my $sc;
+
+if ( !$options->{'password'} ) {
+
+    print "Enter $options->{username} password: ";
+    ReadMode 'noecho';
+
+    $options->{'password'} = ReadLine 0;
+    chomp $options->{'password'};
+
+    ReadMode 'normal';
+    print "\n";
+
+}
+
+my $command = $ARGV[0] || undef;
+
+my $dispatch_table = {
+    'request' => sub {
+        $sc->rest->request( $options->{'method'}, $options->{'path'}, decode_json( $options->{'params'} ) );
+    },
+};
+
+if ( !defined( $dispatch_table->{$command} ) ) {
+
+    print "Error: Unknown command\n\n";
+    print "Allowed commands are:\n\t";
+    print join( "\n\t", sort keys %{$dispatch_table} );
+    print "\n\n";
+
+    exit(255);
+
+}
+
+eval {
+    $sc = Net::SecurityCenter->new( $options->{'hostname'} );
+    $sc->login( $options->{'username'}, $options->{'password'} );
+};
+
+if ($@) {
+    print 'Error: ' . catch_error($@);
+    exit(255);
+}
+
+my $fields  = ( $options->{'fields'} || 'id,name' );
+my $results = $dispatch_table->{$command}->();
+
+print JSON->new->pretty(1)->encode($results);
+
+exit;
+
+
+sub catch_error {
+    my ($error) = @_;
+    $error =~ s/ at .* line \d+.*//;
+    return $error;
+}
+
+
+
+__END__
+=encoding utf-8
+
+=head1 NAME
+
+sc-api - Tenable.sc (SecurityCenter) API command line interface
+
+=head1 SYNOPSIS
+
+    sc-api [COMMAND] [OPTIONS]
+
+    Commands:
+        request             Execute RAW REST request
+
+    Options:
+        --help              Brief help message
+        --man               Full documentation
+        --verbose           Print more info during run
+
+        --hostname          Tenable.sc (SecurityCenter) host/IP address
+        --username          Username
+        --password          Password
+        --format            Output format
+
+=head1 DESCRIPTION
+
+C<sc-api> Tenable.sc (SecurityCenter) API command line interface.
+
+=head1 COMMANDS
+
+=head2 request
+
+Execute RAW REST request to Tenable.sc (SecurityCenter).
+
+For more information about the Tenable.sc (SecurityCenter) REST API follow the online documentation:
+
+=over 4
+
+=item * L<https://docs.tenable.com/sccv/api/index.html>
+
+=back
+
+=head3 Options
+
+    --method    HTTP Request method (GET, POST, HEAD, DELETE, PUT, PATCH)
+    --path      REST API path (eg. /scan, /policy/1)
+    --params    Params in JSON format (eg. {"fields":"id,name,description"})
+
+=head3 Example
+
+    sc-api request --method GET --path /scan --params '{ "fields":"id,name" }' \
+            --hostname sc.example.org --username secman --password password
+
+=head1 OPTIONS
+
+=head1 AUTHOR
+
+L<Giuseppe Di Terlizzi|https://metacpan.org/author/gdt>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright © 2018-2019 L<Giuseppe Di Terlizzi|https://metacpan.org/author/gdt>
+
+You may use and distribute this module according to the same terms
+that Perl is distributed under.

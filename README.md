@@ -30,5 +30,5 @@ To install `Net::SecurityCenter` module, run the following commands:
 
 ## Copyright
 
- - Copyright 2018 © Giuseppe Di Terlizzi
+ - Copyright 2018-2019 © Giuseppe Di Terlizzi
  - Nessus® and SecurityCenter® is a Registered Trademark of Tenable®, Inc.
