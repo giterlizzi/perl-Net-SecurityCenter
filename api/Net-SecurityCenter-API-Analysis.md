@@ -117,7 +117,7 @@ Params:
 
 Processes a query for log analysis.
 
-**NOTE**: This is a facility for `$get->get( type => 'scLog', ... )` method
+**NOTE**: This is a facility for `$sc->get( type => 'scLog', ... )` method
 
 Params:
 
@@ -128,6 +128,92 @@ Params:
 - `organization` : ID of SecurityCenter organization
 - `page` : Number of page for pagination (default is `all`)
 - `limit` : Number of items (default is `1000`)
+
+## get\_vulnerabilities
+
+Processes a query for vulnerability analysis.
+
+**NOTE**: This is a facility for `$sc->get( type => 'vuln', ... )` method
+
+Params:
+
+- `query_id` : ID of query
+- `sort_dir` : Sort direction `ASC` or `DESC`
+- `sort_field` : Sort field
+- `source` : Type of source
+    - `individual`
+    - `cumulative`
+    - `patched`
+- `view` : View type (see above for allowed params)
+- `scan_id` : Scan ID
+- `tool` : Tool (see above for allowed params)
+- `page` : Number of page for pagination
+- `limit` : Number of items (default is `1000`)
+- `filters` : Filter array for _field_, _operator_ and _value_ (eg. `[ 'ip', '=', '10.10.0.0/16' ]`)
+
+## get\_events
+
+Processes a query for event analysis.
+
+**NOTE**: This is a facility for `$sc->get( type => 'event', ... )` method
+
+Params:
+
+- `query_id` : ID of query
+- `sort_dir` : Sort direction `ASC` or `DESC`
+- `sort_field` : Sort field
+- `source` : Type of source
+    - `lce`
+    - `archive`
+- `view` : View type (see `$sc->get` for allowed params)
+- `lce_id` : LCE ID
+- `tool` : Tool
+    - `listdata`
+    - `sumasset`
+    - `sumclassa`
+    - `sumclassb`
+    - `sumclassc`
+    - `sumconns`
+    - `sumdate`
+    - `sumdstip`
+    - `sumevent`
+    - `sumevent2`
+    - `sumip`
+    - `sumport`
+    - `sumprotocol`
+    - `sumsrcip`
+    - `sumtime`
+    - `sumtype`
+    - `sumuser`
+    - `syslog`
+    - `timedist`
+- `page` : Number of page for pagination
+- `limit` : Number of items (default is `1000`)
+- `filters` : Filter array for _field_, _operator_ and _value_ (eg. `[ 'ip', '=', '10.10.0.0/16' ]`)
+
+## get\_mobile
+
+Processes a query for mobile analysis.
+
+**NOTE**: This is a facility for `$sc->get( type => 'mobile', ... )` method
+
+Params:
+
+- `query_id` : ID of query
+- `sort_dir` : Sort direction `ASC` or `DESC`
+- `sort_field` : Sort field
+- `tool` : Tool
+    - `listvuln`
+    - `sumdeviceid`
+    - `summdmuser`
+    - `summodel`
+    - `sumoscpe`
+    - `sumpluginid`
+    - `sumseverity`
+    - `vulndetails`
+- `page` : Number of page for pagination
+- `limit` : Number of items (default is `1000`)
+- `filters` : Filter array for _field_, _operator_ and _value_ (eg. `[ 'ip '= '10.10.0.0/16' ]`)
 
 # SUPPORT
 
