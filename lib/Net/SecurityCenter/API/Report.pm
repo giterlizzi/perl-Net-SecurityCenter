@@ -145,7 +145,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head2 Net::SecurityCenter::API::Report->new ( $rest )
 
-Create a new instance of B<Net::SecurityCenter::API::Report> using L<Net::Security::Center::REST> class.
+Create a new instance of B<Net::SecurityCenter::API::Report> using L<Net::SecurityCenter::REST> class.
 
 
 =head1 METHODS

@@ -471,7 +471,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head2 Net::SecurityCenter::REST->new ( host [, $params ] )
 
-Create a new instance of L<Net::Security::Center::REST>.
+Create a new instance of L<Net::SecurityCenter::REST>.
 
 Params:
 

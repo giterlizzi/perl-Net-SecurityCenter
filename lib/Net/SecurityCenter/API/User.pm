@@ -116,7 +116,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head2 Net::SecurityCenter::API::User->new ( $rest )
 
-Create a new instance of B<Net::SecurityCenter::API::User> using L<Net::Security::Center::REST> class.
+Create a new instance of B<Net::SecurityCenter::API::User> using L<Net::SecurityCenter::REST> class.
 
 
 =head1 METHODS

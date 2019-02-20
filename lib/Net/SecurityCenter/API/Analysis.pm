@@ -429,7 +429,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head2 Net::SecurityCenter::API::Analysis->new ( $rest )
 
-Create a new instance of B<Net::SecurityCenter::API::Analysis> using L<Net::Security::Center::REST> class.
+Create a new instance of B<Net::SecurityCenter::API::Analysis> using L<Net::SecurityCenter::REST> class.
 
 
 =head1 METHODS
@@ -586,13 +586,14 @@ Allowed values:
 
 =item * C<limit> : Number of items (default is C<1000>)
 
+
 =back
 
 =head2 get_log
 
 Processes a query for log analysis.
 
-B<NOTE>: This is a facility for C<$get-E<gt>get( type =E<gt> 'scLog', ... )> method
+B<NOTE>: This is a facility for C<$sc-E<gt>get( type =E<gt> 'scLog', ... )> method
 
 Params:
 
@@ -614,6 +615,175 @@ Params:
 
 =back
 
+=head2 get_vulnerabilities
+
+Processes a query for vulnerability analysis.
+
+B<NOTE>: This is a facility for C<$sc-E<gt>get( type =E<gt> 'vuln', ... )> method
+
+Params:
+
+=over 4
+
+=item * C<query_id> : ID of query
+
+=item * C<sort_dir> : Sort direction C<ASC> or C<DESC>
+
+=item * C<sort_field> : Sort field
+
+=item * C<source> : Type of source
+
+=over 4
+
+=item C<individual>
+
+=item C<cumulative>
+
+=item C<patched>
+
+=back
+
+=item * C<view> : View type (see C<$sc-E<gt>get( view =E<gt> ... )> for allowed values)
+
+=item * C<scan_id> : Scan ID
+
+=item * C<tool> : Tool (see C<$sc-E<gt>get( tool =E<gt> ... )> for allowed params)
+
+=item * C<page> : Number of page for pagination
+
+=item * C<limit> : Number of items (default is C<1000>)
+
+=item * C<filters> : Filter array for I<field>, I<operator> and I<value> (eg. C<[ 'ip', '=', '10.10.0.0/16' ]>)
+
+=back
+
+=head2 get_events
+
+Processes a query for event analysis.
+
+B<NOTE>: This is a facility for C<$sc-E<gt>get( type =E<gt> 'event', ... )> method
+
+Params:
+
+=over 4
+
+=item * C<query_id> : ID of query
+
+=item * C<sort_dir> : Sort direction C<ASC> or C<DESC>
+
+=item * C<sort_field> : Sort field
+
+=item * C<source> : Type of source
+
+=over 4
+
+=item C<lce>
+
+=item C<archive>
+
+=back
+
+=item * C<view> : View type (see C<$sc-E<gt>get( view =E<gt> ... )> for allowed values)
+
+=item * C<lce_id> : LCE ID
+
+=item * C<tool> : Tool
+
+=over 4
+
+=item * C<listdata>
+
+=item * C<sumasset>
+
+=item * C<sumclassa>
+
+=item * C<sumclassb>
+
+=item * C<sumclassc>
+
+=item * C<sumconns>
+
+=item * C<sumdate>
+
+=item * C<sumdstip>
+
+=item * C<sumevent>
+
+=item * C<sumevent2>
+
+=item * C<sumip>
+
+=item * C<sumport>
+
+=item * C<sumprotocol>
+
+=item * C<sumsrcip>
+
+=item * C<sumtime>
+
+=item * C<sumtype>
+
+=item * C<sumuser>
+
+=item * C<syslog>
+
+=item * C<timedist>
+
+=back
+
+=item * C<page> : Number of page for pagination
+
+=item * C<limit> : Number of items (default is C<1000>)
+
+=item * C<filters> : Filter array for I<field>, I<operator> and I<value> (eg. C<[ 'ip', '=', '10.10.0.0/16' ]>)
+
+=back
+
+=head2 get_mobile
+
+Processes a query for mobile analysis.
+
+B<NOTE>: This is a facility for C<$sc-E<gt>get( type =E<gt> 'mobile', ... )> method
+
+Params:
+
+=over 4
+
+=item * C<query_id> : ID of query
+
+=item * C<sort_dir> : Sort direction C<ASC> or C<DESC>
+
+=item * C<sort_field> : Sort field
+
+=item * C<tool> : Tool
+
+=over 4
+
+=item * C<listvuln>
+
+=item * C<sumdeviceid>
+
+=item * C<summdmuser>
+
+=item * C<summodel>
+
+=item * C<sumoscpe>
+
+=item * C<sumpluginid>
+
+=item * C<sumseverity>
+
+=item * C<vulndetails>
+
+=back
+
+=item * C<page> : Number of page for pagination
+
+=item * C<limit> : Number of items (default is C<1000>)
+
+=item * C<filters> : Filter array for I<field>, I<operator> and I<value> (eg. C<[ 'ip '= '10.10.0.0/16' ]>)
+
+=back
 
 =head1 SUPPORT
 

@@ -257,7 +257,7 @@ Net::SecurityCenter - Perl interface to Tenable.sc (SecurityCenter) REST API
 
     $sc->login('secman', 'password');
 
-    my $running_scans = $sc->get_running_scan;
+    my $running_scans = $sc->scan_result->list_running;
 
     $sc->logout();
 
@@ -276,7 +276,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head2 Net::SecurityCenter->new ( host [, $params ] )
 
-Create a new instance of B<Net::Security::Center> using L<Net::Security::Center::REST> class.
+Create a new instance of B<Net::Security::Center> using L<Net::SecurityCenter::REST> class.
 
 Params:
 

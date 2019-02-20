@@ -82,7 +82,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head2 Net::SecurityCenter::API::File->new ( $rest )
 
-Create a new instance of B<Net::SecurityCenter::API::File> using L<Net::Security::Center::REST> class.
+Create a new instance of B<Net::SecurityCenter::API::File> using L<Net::SecurityCenter::REST> class.
 
 
 =head1 METHODS

@@ -136,7 +136,7 @@ Decode Nessus scanner status.
 
 =head2 Net::SecurityCenter::API::Scanner->new ( $rest )
 
-Create a new instance of B<Net::SecurityCenter::API::Scanner> using L<Net::Security::Center::REST> class.
+Create a new instance of B<Net::SecurityCenter::API::Scanner> using L<Net::SecurityCenter::REST> class.
 
 
 =head1 METHODS

@@ -218,7 +218,7 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 =head2 Net::SecurityCenter::API::Plugin->new ( $rest )
 
-Create a new instance of B<Net::SecurityCenter::API::Plugin> using L<Net::Security::Center::REST> class.
+Create a new instance of B<Net::SecurityCenter::API::Plugin> using L<Net::SecurityCenter::REST> class.
 
 
 =head1 METHODS

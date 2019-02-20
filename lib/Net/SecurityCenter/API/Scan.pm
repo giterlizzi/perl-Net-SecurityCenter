@@ -331,7 +331,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head2 Net::SecurityCenter::API::Scan->new ( $rest )
 
-Create a new instance of B<Net::SecurityCenter::API::Scan> using L<Net::Security::Center::REST> class.
+Create a new instance of B<Net::SecurityCenter::API::Scan> using L<Net::SecurityCenter::REST> class.
 
 
 =head1 METHODS
