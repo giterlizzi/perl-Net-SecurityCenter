@@ -144,8 +144,8 @@ sub download {
     my ( $self, %args ) = @_;
 
     my $tmpl = {
-        fields => {},
-        id     => $common_template->{'id'},
+        filename => {},
+        id       => $common_template->{'id'},
     };
 
     my $params    = check( $tmpl, \%args );
