@@ -33,14 +33,14 @@ Create a new instance of **Net::SecurityCenter::API::ScanResult** using [Net::Se
 
 # METHODS
 
-## download\_nessus\_scan
+## download
 
 Download the Nessus (XML) scan result.
 
-    my $nessus_scan = $sc->download_nessus_scan( id => 1337 );
+    my $nessus_scan = $sc->download( id => 1337 );
 
-    $sc->download_nessus_scan( id       => 1337,
-                               filename => '/var/nessus/scans/1337.nessus' );
+    $sc->download( id       => 1337,
+                   filename => '/var/nessus/scans/1337.nessus' );
 
 Params:
 
