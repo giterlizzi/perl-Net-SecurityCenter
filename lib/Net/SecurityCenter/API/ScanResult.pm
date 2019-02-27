@@ -38,7 +38,7 @@ my $common_template = {
 # METHODS
 #-------------------------------------------------------------------------------
 
-sub download_nessus_scan {
+sub download {
 
     my ( $self, %args ) = @_;
 
@@ -295,14 +295,14 @@ Create a new instance of B<Net::SecurityCenter::API::ScanResult> using L<Net::Se
 
 =head1 METHODS
 
-=head2 download_nessus_scan
+=head2 download
 
 Download the Nessus (XML) scan result.
 
-    my $nessus_scan = $sc->download_nessus_scan( id => 1337 );
+    my $nessus_scan = $sc->download( id => 1337 );
 
-    $sc->download_nessus_scan( id       => 1337,
-                               filename => '/var/nessus/scans/1337.nessus' );
+    $sc->download( id       => 1337,
+                   filename => '/var/nessus/scans/1337.nessus' );
 
 Params:
 
