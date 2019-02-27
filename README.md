@@ -13,8 +13,8 @@
     my $running_scans = $sc->scan_result->list_running;
 
     if ($sc->scan_result->get_status( id => 1337 ) eq 'completed') {
-        $sc->scan_result->download_nessus_scan( id       => 1337,
-                                                filename => '/tmp/1337.nessus' );
+        $sc->scan_result->download( id       => 1337,
+                                    filename => '/tmp/1337.nessus' );
 
     }
 
