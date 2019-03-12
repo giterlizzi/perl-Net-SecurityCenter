@@ -12,7 +12,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 my $common_template = {
 
@@ -30,7 +30,7 @@ my $common_template = {
     },
 
     fields => {
-        filter => \&filter_array_to_string,
+        filter => \&sc_filter_array_to_string,
     },
 
 };
@@ -44,6 +44,7 @@ sub list {
     my ( $self, %args ) = @_;
 
     my $tmpl = {
+        raw    => {},
         fields => $common_template->{'fields'},
         type   => {
             allow => [ 'active', 'all', 'compliance', 'custom', 'lce', 'notPassive', 'passive' ],
@@ -113,9 +114,15 @@ sub list {
 
     }
 
-    my $params = check( $tmpl, \%args );
+    my $params  = sc_check_params( $tmpl, \%args );
+    my $raw     = delete( $params->{'raw'} );
+    my $plugins = $self->rest->get( '/plugin', $params );
 
-    return $self->rest->get( '/plugin', $params );
+    if ($raw) {
+        return $plugins;
+    }
+
+    return sc_normalize_array($plugins);
 
 }
 
@@ -128,12 +135,19 @@ sub get {
     my $tmpl = {
         fields => $common_template->{'fields'},
         id     => $common_template->{'id'},
+        raw    => {},
     };
 
-    my $params    = check( $tmpl, \%args );
+    my $params    = sc_check_params( $tmpl, \%args );
+    my $raw       = delete( $params->{'raw'} );
     my $plugin_id = delete( $params->{'id'} );
+    my $plugin    = $self->rest->get( "/plugin/$plugin_id", $params );
 
-    return $self->rest->get( "/plugin/$plugin_id", $params );
+    if ($raw) {
+        return $plugin;
+    }
+
+    return sc_normalize_hash($plugin);
 
 }
 
@@ -148,7 +162,7 @@ sub download {
         id       => $common_template->{'id'},
     };
 
-    my $params    = check( $tmpl, \%args );
+    my $params    = sc_check_params( $tmpl, \%args );
     my $plugin_id = delete( $params->{'id'} );
     my $filename  = delete( $params->{'filename'} );
 

@@ -7,7 +7,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 #-------------------------------------------------------------------------------
 # METHODS
@@ -19,12 +19,20 @@ sub get_status {
 
     my $tmpl = {
         fields => {
-            filter => \&filter_array_to_string
-        }
+            filter => \&sc_filter_array_to_string
+        },
+        raw => {},
     };
 
-    my $params = check( $tmpl, \%args );
-    return $self->rest->get( '/status', $params );
+    my $params = sc_check_params( $tmpl, \%args );
+    my $raw    = delete( $params->{'raw'} );
+    my $status = $self->rest->get( '/status', $params );
+
+    if ($raw) {
+        return $status;
+    }
+
+    return sc_normalize_hash($status);
 
 }
 
@@ -32,8 +40,19 @@ sub get_status {
 
 sub get_info {
 
-    my ($self) = @_;
-    return $self->rest->get('/system');
+    my ( $self, %args ) = @_;
+
+    my $tmpl = { raw => {}, };
+
+    my $params = sc_check_params( $tmpl, \%args );
+    my $raw    = delete( $params->{'raw'} );
+    my $info   = $self->rest->get('/system');
+
+    if ($raw) {
+        return $info;
+    }
+
+    return sc_normalize_hash($info);
 
 }
 
@@ -41,8 +60,19 @@ sub get_info {
 
 sub get_diagnostics_info {
 
-    my ($self) = @_;
-    return $self->rest->get('/system/diagnostics');
+    my ( $self, %args ) = @_;
+
+    my $tmpl = { raw => {}, };
+
+    my $params = sc_check_params( $tmpl, \%args );
+    my $raw    = delete( $params->{'raw'} );
+    my $info   = $self->rest->get('/system/diagnostics');
+
+    if ($raw) {
+        return $info;
+    }
+
+    return sc_normalize_hash($info);
 
 }
 
@@ -73,7 +103,7 @@ sub generate_diagnostics_file {
         },
     };
 
-    my $params  = check( $tmpl, \%args );
+    my $params  = sc_check_params( $tmpl, \%args );
     my $options = delete( $params->{'type'} );
 
     return $self->rest->post( '/system/diagnostics/generate',

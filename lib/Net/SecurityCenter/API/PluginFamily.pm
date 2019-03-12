@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 my $common_template = {
 
@@ -78,7 +78,7 @@ my $common_template = {
     },
 
     fields => {
-        filter => \&filter_array_to_string,
+        filter => \&sc_filter_array_to_string,
     },
 
 };
@@ -101,10 +101,8 @@ sub list {
         op             => $common_template->{'op'},
     };
 
-    my $params           = check( $tmpl, \%args );
-    my $plugin_family_id = delete( $params->{'id'} );
-
-    return $self->rest->get( "/pluginFamily/$plugin_family_id/plugins", $params );
+    my $params = sc_check_params( $tmpl, \%args );
+    return $self->rest->get( '/pluginFamily', $params );
 
 }
 
@@ -127,9 +125,16 @@ sub list_plugins {
         op             => $common_template->{'op'},
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params           = sc_check_params( $tmpl, \%args );
+    my $raw              = delete( $params->{'raw'} );
+    my $plugin_family_id = delete( $params->{'id'} );
+    my $plugins          = $self->rest->get( "/pluginFamily/$plugin_family_id/plugins", $params );
 
-    return $self->rest->get( '/pluginFamily', $params );
+    if ($raw) {
+        return $plugins;
+    }
+
+    return sc_normalize_array($plugins);
 
 }
 
@@ -144,7 +149,7 @@ sub get {
         id     => $common_template->{'id'},
     };
 
-    my $params           = check( $tmpl, \%args );
+    my $params           = sc_check_params( $tmpl, \%args );
     my $plugin_family_id = delete( $params->{'id'} );
 
     return $self->rest->get( "/pluginFamily/$plugin_family_id", $params );

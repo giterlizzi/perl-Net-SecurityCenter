@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 my $common_template = {
 
@@ -22,12 +22,8 @@ my $common_template = {
         },
     },
 
-    filter => {
-        allow => [ 'usable', 'manageable' ],
-    },
-
     fields => {
-        filter => \&filter_array_to_string
+        filter => \&sc_filter_array_to_string
     }
 
 };
@@ -42,13 +38,18 @@ sub list {
 
     my $tmpl = {
         fields => $common_template->{'fields'},
-        filter => $common_template->{'filter'},
+        raw    => {},
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
     my $zones  = $self->rest->get( '/zone', $params );
+    my $raw    = delete( $params->{'raw'} );
 
-    return extract_param( 'filter', $params, $zones );
+    if ($raw) {
+        return $zones;
+    }
+
+    return sc_normalize_array($zones);
 
 }
 
@@ -61,12 +62,19 @@ sub get {
     my $tmpl = {
         fields => $common_template->{'fields'},
         id     => $common_template->{'id'},
+        raw    => {},
     };
 
-    my $params  = check( $tmpl, \%args );
+    my $params  = sc_check_params( $tmpl, \%args );
     my $zone_id = delete( $params->{'id'} );
+    my $raw     = delete( $params->{'raw'} );
+    my $zone    = $self->rest->get( "/zone/$zone_id", $params );
 
-    return $self->rest->get( "/zone/$zone_id", $params );
+    if ($raw) {
+        return $zone;
+    }
+
+    return sc_normalize_hash($zone);
 
 }
 
@@ -116,11 +124,11 @@ Create a new instance of B<Net::SecurityCenter::API::Zone> using L<Net::Security
 
 =head1 METHODS
 
-=head2 list ( [ %params ] )
+=head2 list
 
 Get the scan zone list.
 
-=head2 get ( $zone_id [, $fields ] )
+=head2 get
 
 Get the scan zone associated with C<zone_id>.
 

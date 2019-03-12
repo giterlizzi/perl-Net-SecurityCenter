@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 my $common_template = {
 
@@ -22,12 +22,8 @@ my $common_template = {
         },
     },
 
-    filter => {
-        allow => [ 'usable', 'manageable' ],
-    },
-
     fields => {
-        filter => \&filter_array_to_string,
+        filter => \&sc_filter_array_to_string,
     },
 
 };
@@ -42,12 +38,24 @@ sub list {
 
     my $tmpl = {
         fields => $common_template->{'fields'},
-        filter => $common_template->{'filter'},
+        type   => {
+            allow       => [ 'all', 'local', 'remote', 'offline' ],
+            post_filter => sub {
+                ucfirst(shift);
+            }
+        },
+        raw => {},
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params       = sc_check_params( $tmpl, \%args );
+    my $raw          = delete( $params->{'raw'} );
+    my $repositories = $self->rest->get( '/repository', $params );
 
-    return $self->rest->get( '/repository', $params );
+    if ($raw) {
+        return $repositories;
+    }
+
+    return sc_normalize_array($repositories);
 
 }
 
@@ -60,12 +68,19 @@ sub get {
     my $tmpl = {
         fields => $common_template->{'fields'},
         id     => $common_template->{'id'},
+        raw    => {},
     };
 
-    my $params        = check( $tmpl, \%args );
+    my $params        = sc_check_params( $tmpl, \%args );
+    my $raw           = delete( $params->{'raw'} );
     my $repository_id = delete( $params->{'id'} );
+    my $repository    = $self->rest->get( "/repository/$repository_id", $params );
 
-    return $self->rest->get( "/repository/$repository_id", $params );
+    if ($raw) {
+        return $repository;
+    }
+
+    return sc_normalize_hash($repository);
 
 }
 
@@ -85,7 +100,7 @@ sub get_device_info {
         }
     };
 
-    my $params        = check( $tmpl, \%args );
+    my $params        = sc_check_params( $tmpl, \%args );
     my $repository_id = delete( $params->{'id'} );
 
     return $self->rest->get( "/repository/$repository_id/deviceInfo", $params );
@@ -107,7 +122,7 @@ sub get_ip_info {
         }
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
 
     return $self->rest->get( "/ipInfo", $params );
 

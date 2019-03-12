@@ -10,7 +10,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 my $common_template = {
 
@@ -28,7 +28,7 @@ my $common_template = {
     },
 
     fields => {
-        filter => \&filter_array_to_string,
+        filter => \&sc_filter_array_to_string,
     },
 
 };
@@ -44,12 +44,18 @@ sub list {
     my $tmpl = {
         fields => $common_template->{'fields'},
         filter => $common_template->{'filter'},
+        raw    => {}
     };
 
-    my $params   = check( $tmpl, \%args );
+    my $params   = sc_check_params( $tmpl, \%args );
+    my $raw      = delete( $params->{'raw'} );
     my $policies = $self->rest->get( '/policy', $params );
 
-    return extract_param( 'filter', $params, $policies );
+    if ($raw) {
+        return $policies;
+    }
+
+    return sc_merge($policies);
 
 }
 
@@ -64,10 +70,11 @@ sub get {
         id     => $common_template->{'id'},
     };
 
-    my $params    = check( $tmpl, \%args );
+    my $params    = sc_check_params( $tmpl, \%args );
     my $policy_id = delete( $params->{'id'} );
+    my $policy    = $self->rest->get( "/policy/$policy_id", $params );
 
-    return $self->rest->get( "/policy/$policy_id", $params );
+    return sc_normalize_hash($policy);
 
 }
 
@@ -82,7 +89,7 @@ sub download {
         id       => $common_template->{'id'},
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
 
     my $policy_id = delete( $params->{'id'} );
     my $filename  = delete( $params->{'filename'} );
@@ -154,6 +161,26 @@ Create a new instance of B<Net::SecurityCenter::API::Policy> using L<Net::Securi
 =head2 list
 
 Get list of policies.
+
+Params:
+
+=over 4
+
+=item * C<fields>: Fields array or comma-separated-value string
+
+=item * C<filter>: Filter for:
+
+=over 4
+
+=item * C<manageable>
+
+=item * C<usable>
+
+=back
+
+=item * C<raw>: Return RAW Tenable.sc output without sc_merge C<usable> and C<manageable> array
+
+=back
 
 =head2 get
 

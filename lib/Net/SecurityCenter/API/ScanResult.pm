@@ -11,7 +11,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 my $common_template = {
 
@@ -25,11 +25,11 @@ my $common_template = {
     },
 
     filter => {
-        allow => [ 'usable', 'manageable', 'running' ]
+        allow => [ 'usable', 'manageable', 'running', 'completed' ]
     },
 
     fields => {
-        allow => \&filter_array_to_string,
+        allow => \&sc_filter_array_to_string,
     }
 
 };
@@ -47,7 +47,7 @@ sub download {
         id       => $common_template->{'id'},
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
 
     my $scan_result_id = delete( $params->{'id'} );
     my $filename       = delete( $params->{'filename'} );
@@ -82,6 +82,7 @@ sub list {
     my $tmpl = {
         fields     => $common_template->{'fields'},
         filter     => $common_template->{'filter'},
+        raw        => {},
         start_date => {
             allow => qr/^\d+$/,
             remap => 'startDate'
@@ -92,20 +93,15 @@ sub list {
         }
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
+    my $raw    = delete( $params->{'raw'} );
     my $scans  = $self->rest->get( '/scanResult', $params );
 
-    # NOTE: 'running' and 'completed' filters return always 'manageable' and 'usable' scans
-    if ( defined( $params->{'filter'} ) && ( $params->{'filter'} ne 'running' && $params->{'filter'} ne 'completed' ) )
-    {
-        if ( defined( $scans->{ $params->{'filter'} } ) ) {
-            return $scans->{ $params->{'filter'} };
-        } else {
-            return [];
-        }
+    if ($raw) {
+        return $scans;
     }
 
-    return $scans;
+    return sc_merge($scans);
 
 }
 
@@ -115,9 +111,9 @@ sub list_running {
 
     my ( $self, %args ) = @_;
 
-    my $tmpl = { fields => $common_template->{'fields'}, };
+    my $tmpl = { fields => $common_template->{'fields'}, raw => {}, };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
 
     $params->{'filter'} = 'running';
 
@@ -131,9 +127,9 @@ sub list_completed {
 
     my ( $self, %args ) = @_;
 
-    my $tmpl = { fields => $common_template->{'fields'}, };
+    my $tmpl = { fields => $common_template->{'fields'}, raw => {}, };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
 
     $params->{'filter'} = 'completed';
 
@@ -150,12 +146,20 @@ sub get {
     my $tmpl = {
         id     => $common_template->{'id'},
         fields => $common_template->{'fields'},
+        raw    => {},
     };
 
-    my $params         = check( $tmpl, \%args );
+    my $params         = sc_check_params( $tmpl, \%args );
     my $scan_result_id = delete( $params->{'id'} );
+    my $raw            = delete( $params->{'raw'} );
 
-    return $self->rest->get( "/scanResult/$scan_result_id", $params );
+    my $scan_result = $self->rest->get( "/scanResult/$scan_result_id", $params );
+
+    if ($raw) {
+        return $scan_result;
+    }
+
+    return sc_normalize_hash($scan_result);
 
 }
 
@@ -167,7 +171,7 @@ sub get_progress {
 
     my $tmpl = { id => $common_template->{'id'}, };
 
-    my $params         = check( $tmpl, \%args );
+    my $params         = sc_check_params( $tmpl, \%args );
     my $scan_result_id = delete( $params->{'id'} );
 
     my $scan_data = $self->get(
@@ -187,7 +191,7 @@ sub get_status {
 
     my $tmpl = { id => $common_template->{'id'}, };
 
-    my $params         = check( $tmpl, \%args );
+    my $params         = sc_check_params( $tmpl, \%args );
     my $scan_result_id = delete( $params->{'id'} );
 
     my $scan_data = $self->get(
@@ -207,7 +211,7 @@ sub pause {
 
     my $tmpl = { id => $common_template->{'id'}, };
 
-    my $params         = check( $tmpl, \%args );
+    my $params         = sc_check_params( $tmpl, \%args );
     my $scan_result_id = delete( $params->{'id'} );
 
     $self->rest->post("/scanResult/$scan_result_id/pause");
@@ -223,7 +227,7 @@ sub resume {
 
     my $tmpl = { id => $common_template->{'id'}, };
 
-    my $params         = check( $tmpl, \%args );
+    my $params         = sc_check_params( $tmpl, \%args );
     my $scan_result_id = delete( $params->{'id'} );
 
     $self->rest->post("/scanResult/$scan_result_id/resume");
@@ -239,7 +243,7 @@ sub stop {
 
     my $tmpl = { id => $common_template->{'id'}, };
 
-    my $params         = check( $tmpl, \%args );
+    my $params         = sc_check_params( $tmpl, \%args );
     my $scan_result_id = delete( $params->{'id'} );
 
     $self->rest->post("/scanResult/$scan_result_id/stop");

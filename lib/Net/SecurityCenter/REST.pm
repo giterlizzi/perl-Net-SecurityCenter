@@ -12,7 +12,7 @@ use LWP::UserAgent;
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 #-------------------------------------------------------------------------------
 # CONSTRUCTOR
@@ -33,8 +33,8 @@ sub new {
 
     my $timeout  = delete( $options->{'timeout'} );
     my $ssl_opts = delete( $options->{'ssl_options'} ) || {};
-    my $logger   = delete( $options->{'logger'} ) || undef;
-    my $no_check = delete( $options->{'no_check'} ) || 0;
+    my $logger   = delete( $options->{'logger'} )      || undef;
+    my $no_check = delete( $options->{'no_check'} )    || 0;
 
     if ($timeout) {
         $agent->timeout($timeout);
@@ -43,6 +43,7 @@ sub new {
     if ($ssl_opts) {
         $agent->ssl_opts($ssl_opts);
     }
+
     $agent->cookie_jar($cookie_jar);
 
     my $self = {
@@ -111,7 +112,7 @@ sub _check {
 
     my $response = eval { $self->request( 'GET', '/system' ) };
 
-    croak( 'Failed to connect to Security Center using ', $self->{'url'}, ' REST URL' )
+    croak( 'Failed to connect to Tenable.sc (SecurityCenter) : ', $self->{'host'} )
         if ($EVAL_ERROR);
 
     if ($response) {
@@ -122,7 +123,7 @@ sub _check {
         $self->{'uuid'}     = $response->{'uuid'};
 
         if ( $self->{'logger'} ) {
-            $self->logger( 'info', 'SecurityCenter ' . $self->{'version'} . ' (Build ID:' . $self->{'build_id'} . ')' );
+            $self->logger( 'info', 'Tenable.sc (SecurityCenter) ' . $self->{'version'} . ' (Build ID:' . $self->{'build_id'} . ')' );
         }
 
     }

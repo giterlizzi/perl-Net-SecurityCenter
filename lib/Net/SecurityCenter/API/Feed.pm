@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 #-------------------------------------------------------------------------------
 # METHODS
@@ -23,11 +23,13 @@ sub status {
         type => {
             default => 'all',
             allow   => [ 'all', 'active', 'passive', 'lce', 'sc' ]
-        }
+        },
+        raw => {}
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
     my $type   = delete( $params->{'type'} );
+    my $raw    = delete( $params->{'raw'} );
 
     my $feed_path = '/feed';
 
@@ -35,7 +37,13 @@ sub status {
         $feed_path .= "/$type";
     }
 
-    return $self->rest->get($feed_path);
+    my $feed = $self->rest->get($feed_path);
+
+    if ($raw) {
+        return $feed;
+    }
+
+    return sc_normalize_hash($feed);
 
 }
 
@@ -52,7 +60,7 @@ sub update {
         }
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
     my $type   = delete( $params->{'type'} );
 
     $self->rest->post("/feed/$type/update");
@@ -77,7 +85,7 @@ sub process {
         }
     };
 
-    my $params   = check( $tmpl, \%args );
+    my $params   = sc_check_params( $tmpl, \%args );
     my $type     = delete( $params->{'type'} );
     my $filename = delete( $params->{'filename'} );
 

@@ -3,7 +3,7 @@ package Net::SecurityCenter::API;
 use warnings;
 use strict;
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 #-------------------------------------------------------------------------------
 # CONSTRUCTOR

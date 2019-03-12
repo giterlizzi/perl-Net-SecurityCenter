@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 my $common_template = {
     tool => {
@@ -84,7 +84,7 @@ sub get {
         page       => $common_template->{'page'},
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
 
     my $scan_id    = delete( $params->{'scan_id'} );
     my $query_id   = delete( $params->{'query_id'} );
@@ -216,7 +216,7 @@ sub get_vulnerabilities {
         filters => {}
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
 
     $params->{'type'} = 'vuln';
 
@@ -252,7 +252,7 @@ sub get_events {
         }
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
 
     $params->{'type'} = 'event';
 
@@ -281,7 +281,7 @@ sub get_mobile {
         page  => $common_template->{'page'},
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
 
     $params->{'type'} = 'mobile';
 
@@ -348,7 +348,7 @@ sub get_log {
         page  => $common_template->{'page'},
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
 
     my $analysis_params = {
         type    => 'scLog',

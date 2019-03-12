@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 my $common_template = {
 
@@ -22,12 +22,8 @@ my $common_template = {
         },
     },
 
-    filter => {
-        allow => [ 'usable', 'manageable' ],
-    },
-
     fields => {
-        filter => \&filter_array_to_string,
+        filter => \&sc_filter_array_to_string,
     }
 
 };
@@ -42,11 +38,18 @@ sub list {
 
     my $tmpl = {
         fields => $common_template->{'fields'},
-        filter => $common_template->{'filter'},
+        raw    => {}
     };
 
-    my $params = check( $tmpl, \%args );
-    return $self->rest->get( '/scanner', $params );
+    my $params   = sc_check_params( $tmpl, \%args );
+    my $raw      = delete( $params->{'raw'} );
+    my $scanners = $self->rest->get( '/scanner', $params );
+
+    if ($raw) {
+        return $scanners;
+    }
+
+    return sc_normalize_array($scanners);
 
 }
 
@@ -59,12 +62,20 @@ sub get {
     my $tmpl = {
         fields => $common_template->{'fields'},
         id     => $common_template->{'id'},
+        raw    => {},
     };
 
-    my $params     = check( $tmpl, \%args );
+    my $params     = sc_check_params( $tmpl, \%args );
     my $scanner_id = delete( $params->{'id'} );
+    my $raw        = delete( $params->{'raw'} );
+    my $scanner    = $self->rest->get( "/scanner/$scanner_id", $params );
 
-    return $self->rest->get( "/scanner/$scanner_id", $params );
+    if ($raw) {
+        return $scanner;
+    }
+
+    return sc_normalize_hash($scanner);
+
 }
 
 #-------------------------------------------------------------------------------
@@ -75,12 +86,12 @@ sub get_status {
 
     my $tmpl = { id => $common_template->{'id'}, };
 
-    my $params     = check( $tmpl, \%args );
+    my $params     = sc_check_params( $tmpl, \%args );
     my $scanner_id = delete( $params->{'id'} );
 
     my $scanner = $self->get( id => $scanner_id, fields => [ 'id', 'status' ] );
 
-    return decode_nessus_scanner_status( $scanner->{'status'} );
+    return sc_decode_scanner_status( $scanner->{'status'} );
 
 }
 
@@ -125,7 +136,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 FUNCTIONS
 
-=head2 decode_nessus_scanner_status ( $status_int )
+=head2 sc_decode_scanner_status ( $status_int )
 
 Decode Nessus scanner status.
 

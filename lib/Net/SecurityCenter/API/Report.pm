@@ -10,7 +10,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 my $common_template = {
 
@@ -28,7 +28,7 @@ my $common_template = {
     },
 
     fields => {
-        filter => \&filter_array_to_string,
+        filter => \&sc_filter_array_to_string,
     }
 
 };
@@ -44,10 +44,18 @@ sub list {
     my $tmpl = {
         fields => $common_template->{'fields'},
         filter => $common_template->{'filter'},
+        raw    => {},
     };
 
-    my $params = check( $tmpl, \%args );
-    return $self->rest->get( '/report', $params );
+    my $params  = sc_check_params( $tmpl, \%args );
+    my $raw     = delete( $params->{'raw'} );
+    my $reports = $self->rest->get( '/report', $params );
+
+    if ($raw) {
+        return $reports;
+    }
+
+    return sc_merge($reports);
 
 }
 
@@ -60,13 +68,21 @@ sub get {
     my $tmpl = {
         fields => $common_template->{'fields'},
         id     => $common_template->{'id'},
+        raw    => {},
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
 
     my $report_id = delete( $params->{'id'} );
+    my $raw       = delete( $params->{'raw'} );
 
-    return $self->rest->get( "/report/$report_id", $params );
+    my $report = $self->rest->get( "/report/$report_id", $params );
+
+    if ($raw) {
+        return $report;
+    }
+
+    return sc_normalize_hash($report);
 
 }
 
@@ -81,7 +97,7 @@ sub download {
         id       => $common_template->{'id'},
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
 
     my $report_id = delete( $params->{'id'} );
     my $filename  = delete( $params->{'filename'} );

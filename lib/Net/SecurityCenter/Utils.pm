@@ -5,17 +5,20 @@ use strict;
 
 use Carp;
 use Params::Check qw(allow);
+use Time::Piece;
 use Exporter qw(import);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 our @EXPORT_OK = qw(
-    usage
-    check
-    extract_param
-    decode_nessus_scanner_status
-
-    filter_array_to_string
+    sc_check_params
+    sc_decode_scanner_status
+    sc_filter_array_to_string
+    sc_filter_int_to_bool
+    sc_merge
+    sc_normalize_hash
+    sc_normalize_array
+    sc_method_usage
 );
 
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
@@ -49,7 +52,7 @@ our $NESSUS_SCANNER_STATUS = {
 # FUNCTIONS
 #-------------------------------------------------------------------------------
 
-sub usage {
+sub sc_method_usage {
 
     my ($template) = @_;
 
@@ -83,7 +86,7 @@ sub usage {
 
 #-------------------------------------------------------------------------------
 
-sub check {
+sub sc_check_params {
 
     my ( $template, $params ) = @_;
 
@@ -108,7 +111,7 @@ sub check {
             }
 
             carp $error_message;
-            croak usage($template);
+            croak sc_method_usage($template);
 
         }
 
@@ -138,7 +141,7 @@ sub check {
 
                     if ( !allow( $_, $tmpl->{'allow'} ) ) {
                         carp "Invalid '$key' ($_) value (allowed values: " . join( ', ', @{ $tmpl->{'allow'} } ) . ')';
-                        croak usage($template);
+                        croak sc_method_usage($template);
                     }
 
                 }
@@ -164,7 +167,7 @@ sub check {
                     }
 
                     carp $error_message;
-                    croak usage($template);
+                    croak sc_method_usage($template);
 
                 }
             }
@@ -198,25 +201,7 @@ sub check {
 
 #-------------------------------------------------------------------------------
 
-sub extract_param {
-
-    my ( $param, $params, $output ) = @_;
-
-    if ( !defined( $params->{$param} ) ) {
-        return $output;
-    }
-
-    if ( defined( $output->{ $params->{$param} } ) ) {
-        return $output->{ $params->{$param} };
-    }
-
-    return [];
-
-}
-
-#-------------------------------------------------------------------------------
-
-sub decode_nessus_scanner_status {
+sub sc_decode_scanner_status {
 
     my ($scanner_status) = @_;
 
@@ -233,10 +218,105 @@ sub decode_nessus_scanner_status {
 }
 
 #-------------------------------------------------------------------------------
+
+sub sc_normalize_hash {
+
+    my ($data) = @_;
+
+    my @time_fields = qw(
+        createdTime
+        finishTime
+        importFinish
+        lastSyncTime
+        lastTrendUpdate
+        lastVulnUpdate
+        modifiedTime
+        startTime
+        updateTime
+        diagnosticsGenerated
+        statusLastChecked
+    );
+
+    my @seconds_fields = qw(
+        scanDuration
+        uptime
+    );
+
+    foreach my $item ( keys %{$data} ) {
+        if ( ref $data->{$item} eq 'HASH' ) {
+            $data->{$item} = sc_normalize_hash( $data->{$item} );
+        }
+        if ( $item =~ m/(Update|Date|Time)$/ && $data->{$item} =~ /\d+/ && ref $data->{$item} ne 'Time::Piece' ) {
+            $data->{$item} = Time::Piece->new( $data->{$item} );
+        }
+    }
+
+    foreach my $field (@time_fields) {
+        if ( exists( $data->{$field} ) && ref $data->{$field} ne 'Time::Piece' ) {
+            $data->{$field} = Time::Piece->new( $data->{$field} );
+        }
+    }
+
+    foreach my $field (@seconds_fields) {
+        if ( exists( $data->{$field} ) && ref $data->{$field} ne 'Time::Seconds' ) {
+            $data->{$field} = Time::Seconds->new( $data->{$field} );
+        }
+    }
+
+    return $data;
+
+}
+
+#-------------------------------------------------------------------------------
+
+sub sc_normalize_array {
+
+    my ($data) = @_;
+
+    my $results = [];
+
+    foreach my $item ( @{$data} ) {
+        push( @{$results}, sc_normalize_hash($item) );
+    }
+
+    return $results;
+
+}
+
+#-------------------------------------------------------------------------------
+
+sub sc_merge {
+
+    my ($data) = @_;
+    my %hash = ();
+
+    foreach my $type ( ( 'usable', 'manageable' ) ) {
+
+        next unless ( exists( $data->{$type} ) );
+
+        foreach my $item ( @{ $data->{$type} } ) {
+
+            $item = sc_normalize_hash($item);
+            $item->{$type} = 1;
+
+            if ( exists( $hash{ $item->{'id'} } ) ) {
+                $hash{ $item->{'id'} }->{$type} = 1;
+            } else {
+                $hash{ $item->{'id'} } = $item;
+            }
+        }
+    }
+
+    my @results = values %hash;
+    return \@results;
+
+}
+
+#-------------------------------------------------------------------------------
 # FILTERS
 #-------------------------------------------------------------------------------
 
-sub filter_array_to_string {
+sub sc_filter_array_to_string {
 
     my ($data) = @_;
 
@@ -248,7 +328,7 @@ sub filter_array_to_string {
 
 }
 
-sub filter_int_to_bool {
+sub sc_filter_int_to_bool {
     return ( $_[0] == 1 ) ? \1 : \0;
 }
 

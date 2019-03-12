@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 my $common_template = {
 
@@ -22,12 +22,8 @@ my $common_template = {
         },
     },
 
-    filter => {
-        allow => [ 'usable', 'manageable' ],
-    },
-
     fields => {
-        filter => \&filter_array_to_string
+        filter => \&sc_filter_array_to_string
     },
 
 };
@@ -41,14 +37,13 @@ sub list {
     my ( $self, %args ) = @_;
 
     my $tmpl = {
-        filter => $common_template->{'filter'},
         fields => $common_template->{'fields'},
         org_id => {
             allow => qr/^\d+$/,
         }
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
 
     return $self->rest->get( '/user', $params );
 
@@ -65,7 +60,7 @@ sub get {
         id     => $common_template->{'id'},
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
 
     my $user_id = delete( $params->{'id'} );
 

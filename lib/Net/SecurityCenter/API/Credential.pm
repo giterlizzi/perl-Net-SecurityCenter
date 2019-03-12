@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 my $common_template = {
 
@@ -27,7 +27,7 @@ my $common_template = {
     },
 
     fields => {
-        filter => \&filter_array_to_string,
+        filter => \&sc_filter_array_to_string,
     },
 
 };
@@ -43,10 +43,18 @@ sub list {
     my $tmpl = {
         filter => $common_template->{'filter'},
         fields => $common_template->{'fields'},
+        raw    => {}
     };
 
-    my $params = check( $tmpl, \%args );
-    return $self->rest->get( '/credential', $params );
+    my $params      = sc_check_params( $tmpl, \%args );
+    my $credentials = $self->rest->get( '/credential', $params );
+    my $raw         = delete( $params->{'raw'} );
+
+    if ($raw) {
+        return $credentials;
+    }
+
+    return sc_merge($credentials);
 
 }
 
@@ -61,7 +69,7 @@ sub get {
         id     => $common_template->{'id'},
     };
 
-    my $params        = check( $tmpl, \%args );
+    my $params        = sc_check_params( $tmpl, \%args );
     my $credential_id = delete( $params->{'id'} );
 
     return $self->rest->get( "/credential/$credential_id", $params );

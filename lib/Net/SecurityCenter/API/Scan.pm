@@ -11,7 +11,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 my $common_template = {
 
@@ -29,7 +29,7 @@ my $common_template = {
     },
 
     fields => {
-        filter => \&filter_array_to_string,
+        filter => \&sc_filter_array_to_string,
     }
 
 };
@@ -88,7 +88,7 @@ sub add {
         },
         description => {},
         targets     => {
-            filter => \&filter_array_to_string,
+            filter => \&sc_filter_array_to_string,
             remap  => 'ipList'
         },
         assets => {
@@ -123,17 +123,17 @@ sub add {
         },
         email_on_launch => {
             remap  => 'emailOnLaunch',
-            filter => \&filter_int_to_bool,
+            filter => \&sc_filter_int_to_bool,
             allow  => qr/\d/,
         },
         email_on_finish => {
             remap  => 'emailOnFinish',
-            filter => \&filter_int_to_bool,
+            filter => \&sc_filter_int_to_bool,
             allow  => qr/\d/,
         },
         dhcp_tracking => {
             remap  => 'dhcpTracking',
-            filter => \&filter_int_to_bool,
+            filter => \&sc_filter_int_to_bool,
             allow  => qr/\d/,
         },
         reports => {
@@ -158,7 +158,7 @@ sub add {
         },
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
 
     croak('"policy" and "plugin" are not allowed in same time')
         if ( defined( $params->{'policy'} ) && defined( $params->{'plugin'} ) );
@@ -216,7 +216,7 @@ sub launch {
         id                  => $common_template->{'id'},
     };
 
-    my $params  = check( $tmpl, \%args );
+    my $params  = sc_check_params( $tmpl, \%args );
     my $scan_id = delete( $params->{'id'} );
     my $result  = $self->rest->post( "/scan/$scan_id/launch", $params );
 
@@ -237,13 +237,18 @@ sub list {
     my $tmpl = {
         fields => $common_template->{'fields'},
         filter => $common_template->{'filter'},
+        raw    => {},
     };
 
-    my $params = check( $tmpl, \%args );
+    my $params = sc_check_params( $tmpl, \%args );
+    my $raw    = delete( $params->{'raw'} );
     my $scans  = $self->rest->get( '/scan', $params );
 
-    return extract_param( 'filter', $params, $scans );
+    if ($raw) {
+        return $scans;
+    }
 
+    return sc_merge($scans);
 }
 
 #-------------------------------------------------------------------------------
@@ -257,10 +262,16 @@ sub get {
         id     => $common_template->{'id'},
     };
 
-    my $params  = check( $tmpl, \%args );
+    my $params  = sc_check_params( $tmpl, \%args );
     my $scan_id = delete( $params->{'id'} );
+    my $raw     = delete( $params->{'raw'} );
+    my $scan    = $self->rest->get( "/scan/$scan_id", $params );
 
-    return $self->rest->get( "/scan/$scan_id", $params );
+    if ($raw) {
+        return $scan;
+    }
+
+    return sc_normalize_hash($scan);
 
 }
 
@@ -272,7 +283,7 @@ sub delete {
 
     my $tmpl = { id => $common_template->{'id'}, };
 
-    my $params  = check( $tmpl, \%args );
+    my $params  = sc_check_params( $tmpl, \%args );
     my $scan_id = delete( $params->{'id'} );
 
     return $self->rest->delete("/scan/$scan_id");

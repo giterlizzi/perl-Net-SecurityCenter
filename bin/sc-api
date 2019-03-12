@@ -15,11 +15,32 @@ use Data::Dumper;
 
 our $VERSION = '0.100_10';
 
-my $options = {};
+sub error {
+    my ($error) = @_;
+    $error =~ s/ at .* line \d+.*//;
+    print "ERROR: $error\n";
+    exit(255);
+}
 
-GetOptions(
+# Try & Catch
 
-    $options,
+sub try(&;$) {
+
+    my ( $try, $catch ) = @_;
+
+    eval {&$try};
+
+    if ($@) {
+        &$catch($@);
+    }
+
+}
+
+sub catch(&) {
+    shift;
+}
+
+my @options = (
 
     'help|h',
     'man',
@@ -30,23 +51,49 @@ GetOptions(
     'password=s',
 
     'format|f=s',
-    'fields=s',
-
-    'method=s',
-    'path=s',
-    'params=s',
+    'dumper',
+    'json'
 
 );
+
+my $options = {};
+my $params  = {};
+my $results = {};
+my $sc;
+
+GetOptions( $options, @options ) or pod2usage( -verbose => 0 );
+
+my $api    = $ARGV[0] || undef;
+my $method = $ARGV[1] || undef;
 
 pod2usage(1) if ( $options->{'help'} );
 
 pod2usage( -exitstatus => 0, -verbose => 2 ) if ( $options->{'man'} );
 pod2usage( -exitstatus => 0, -verbose => 0 ) if ( !$options->{'hostname'} || !$options->{'username'} );
 
-$options->{'format'} ||= 'json';
-$options->{'params'} ||= '{}';
+if ( $options->{'dumper'} ) {
+    $options->{'format'} = 'dumper';
+}
 
-my $sc;
+if ( $options->{'json'} ) {
+    $options->{'format'} = 'json';
+}
+
+$options->{'format'} ||= 'json';
+
+pod2usage( -verbose => 0 ) if ( !$api || !$method );
+
+foreach my $arg (@ARGV) {
+
+    if ( $arg =~ m{^([^:]+):(.*)$} ) {
+
+        my ( $key, $value ) = ( $1, $2 );
+        $key =~ s{-}{_}g;
+        $params->{$key} = $value;
+
+    }
+
+}
 
 if ( !$options->{'password'} ) {
 
@@ -61,50 +108,66 @@ if ( !$options->{'password'} ) {
 
 }
 
-my $command = $ARGV[0] || undef;
-
 my $dispatch_table = {
     'request' => sub {
+        $options->{'params'} ||= '{}';
         $sc->rest->request( $options->{'method'}, $options->{'path'}, decode_json( $options->{'params'} ) );
     },
 };
 
-if ( !defined( $dispatch_table->{$command} ) ) {
-
-    print "Error: Unknown command\n\n";
-    print "Allowed commands are:\n\t";
-    print join( "\n\t", sort keys %{$dispatch_table} );
-    print "\n\n";
-
-    exit(255);
-
-}
-
-eval {
+try {
     $sc = Net::SecurityCenter->new( $options->{'hostname'} );
-    $sc->login( $options->{'username'}, $options->{'password'} );
+} catch {
+    error(@_);
 };
 
-if ($@) {
-    print 'Error: ' . catch_error($@);
-    exit(255);
+if ( !$sc->can($api) || !$sc->$api->can($method) ) {
+    error("Unkown $api $method command");
 }
 
-my $fields  = ( $options->{'fields'} || 'id,name' );
-my $results = $dispatch_table->{$command}->();
+try {
+    $sc->login( $options->{'username'}, $options->{'password'} );
+} catch {
+    error(@_);
+};
 
-print JSON->new->pretty(1)->encode($results);
+try {
+    $results = $sc->$api->$method( %{$params} );
+} catch {
+    error(@_);
+};
 
-exit;
+if ( ref $results eq 'ARRAY' || ref $results eq 'HASH' ) {
 
+    if ( $options->{'format'} eq 'json' ) {
 
-sub catch_error {
-    my ($error) = @_;
-    $error =~ s/ at .* line \d+.*//;
-    return $error;
+        # Convert bessed Time::Piece and Time::Seconds object for JSON encoding
+        require Time::Piece;
+
+        sub Time::Piece::TO_JSON {
+            my ($time) = @_;
+            return $time->datetime;    # convert all date to ISO 8601 format
+        }
+
+        sub Time::Seconds::TO_JSON {
+            my ($time) = @_;
+            return $time->seconds;
+        }
+
+        print JSON->new->pretty(1)->convert_blessed(1)->encode($results);
+        exit(0);
+
+    }
+
+    if ( $options->{'format'} eq 'dumper' ) {
+        print Dumper($results);
+        exit(0);
+    }
+
 }
 
-
+print "$results\n";
+exit(0);
 
 __END__
 =encoding utf-8
@@ -128,7 +191,10 @@ sc-api - Tenable.sc (SecurityCenter) API command line interface
         --hostname          Tenable.sc (SecurityCenter) host/IP address
         --username          Username
         --password          Password
-        --format            Output format
+
+        --format            Output format (default: json)
+        --json              JSON output format
+        --dumper            Data::Dumper output format
 
 =head1 DESCRIPTION
 
