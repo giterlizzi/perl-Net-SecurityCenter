@@ -113,7 +113,7 @@ sub _test {
     );
 
     # Force non-SSL REST URL for HTTP::Daemon
-    $sc->{'rest'}->{'url'} =~ s/https/http/;
+    $sc->{'client'}->{'url'} =~ s/https/http/;
 
     ok( $sc->login( 'secman', 'password' ), 'Login into SecurityCenter' );
 
