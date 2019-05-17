@@ -1,49 +1,23 @@
-# Net::SecurityCenter::API::File
+# Net::SecurityCenter::Error
 # NAME
 
-Net::SecurityCenter::API::File - Perl interface to Tenable.sc (SecurityCenter) File REST API
+Net::SecurityCenter::Error - Error helper for Net::SecurityCenter
 
 # SYNOPSIS
 
-    use Net::SecurityCenter::REST;
-    use Net::SecurityCenter::API::File;
+    use Net::SecurityCenter;
 
-    my $sc = Net::SecurityCenter::REST->new('sc.example.org');
+    my $sc = Net::SecurityCenter('sc.example.org') or die "Error : " . $@;
 
     $sc->login('secman', 'password');
 
-    my $api = Net::SecurityCenter::API::File->new($sc);
+    if ($sc->error) {
+        die $sc->error;
+    }
 
     $sc->logout();
 
 # DESCRIPTION
-
-This module provides Perl scripts easy way to interface the File REST API of Tenable.sc
-(SecurityCenter).
-
-For more information about the Tenable.sc (SecurityCenter) REST API follow the online documentation:
-
-[https://docs.tenable.com/sccv/api/index.html](https://docs.tenable.com/sccv/api/index.html)
-
-# CONSTRUCTOR
-
-## Net::SecurityCenter::API::File->new ( $client )
-
-Create a new instance of **Net::SecurityCenter::API::File** using [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class.
-
-# METHODS
-
-## upload
-
-Uploads a File.
-
-    $sc->file->upload('/tmp/all-2.0.tar.gz');
-
-## clear
-
-Removes the File associated with `filename`.
-
-    $sc->file->clear('4fk1r0');
 
 # SUPPORT
 

@@ -27,7 +27,7 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 # CONSTRUCTOR
 
-## Net::SecurityCenter::API::Policy->new ( $rest )
+## Net::SecurityCenter::API::Policy->new ( $client )
 
 Create a new instance of **Net::SecurityCenter::API::Policy** using [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class.
 
@@ -36,6 +36,14 @@ Create a new instance of **Net::SecurityCenter::API::Policy** using [Net::Securi
 ## list
 
 Get list of policies.
+
+Params:
+
+- `fields`: Fields array or comma-separated-value string
+- `filter`: Filter for:
+    - `manageable`
+    - `usable`
+- `raw`: Return RAW Tenable.sc output without sc\_merge `usable` and `manageable` array
 
 ## get
 

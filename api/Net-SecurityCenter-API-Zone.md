@@ -27,17 +27,17 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 # CONSTRUCTOR
 
-## Net::SecurityCenter::API::Zone->new ( $rest )
+## Net::SecurityCenter::API::Zone->new ( $client )
 
 Create a new instance of **Net::SecurityCenter::API::Zone** using [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class.
 
 # METHODS
 
-## list ( \[ %params \] )
+## list
 
 Get the scan zone list.
 
-## get ( $zone\_id \[, $fields \] )
+## get
 
 Get the scan zone associated with `zone_id`.
 

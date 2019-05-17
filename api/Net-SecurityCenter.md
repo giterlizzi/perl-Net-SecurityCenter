@@ -41,7 +41,7 @@ the REST request and response messages.
 
 # COMMON METHODS
 
-## $sc->rest ()
+## $sc->client ()
 
 Return the instance of [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class
 

@@ -36,7 +36,7 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 # CONSTRUCTOR
 
-## Net::SecurityCenter::API::Scan->new ( $rest )
+## Net::SecurityCenter::API::Scan->new ( $client )
 
 Create a new instance of **Net::SecurityCenter::API::Scan** using [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class.
 

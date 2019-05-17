@@ -27,7 +27,7 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 # FUNCTIONS
 
-## decode\_nessus\_scanner\_status ( $status\_int )
+## sc\_decode\_scanner\_status ( $status\_int )
 
 Decode Nessus scanner status.
 
@@ -35,7 +35,7 @@ Decode Nessus scanner status.
 
 # CONSTRUCTOR
 
-## Net::SecurityCenter::API::Scanner->new ( $rest )
+## Net::SecurityCenter::API::Scanner->new ( $client )
 
 Create a new instance of **Net::SecurityCenter::API::Scanner** using [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class.
 
