@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 #-------------------------------------------------------------------------------
 # METHODS
@@ -37,12 +37,10 @@ sub status {
         $feed_path .= "/$type";
     }
 
-    my $feed = $self->rest->get($feed_path);
+    my $feed = $self->client->get($feed_path);
 
-    if ($raw) {
-        return $feed;
-    }
-
+    return if ( !$feed );
+    return $feed if ($raw);
     return sc_normalize_hash($feed);
 
 }
@@ -63,9 +61,9 @@ sub update {
     my $params = sc_check_params( $tmpl, \%args );
     my $type   = delete( $params->{'type'} );
 
-    $self->rest->post("/feed/$type/update");
+    $self->client->post("/feed/$type/update");
 
-    return 1;
+    return 1;    # TODO
 
 }
 
@@ -89,11 +87,11 @@ sub process {
     my $type     = delete( $params->{'type'} );
     my $filename = delete( $params->{'filename'} );
 
-    my $sc_filename = $self->rest->upload($filename)->{'filename'};
+    my $sc_filename = $self->client->upload($filename)->{'filename'};
 
-    $self->rest->post( "/feed/$type/process", { 'filename' => $sc_filename } );
+    $self->client->post( "/feed/$type/process", { 'filename' => $sc_filename } );
 
-    return 1;
+    return 1;    # TODO
 
 }
 
@@ -138,7 +136,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::Feed->new ( $rest )
+=head2 Net::SecurityCenter::API::Feed->new ( $client )
 
 Create a new instance of B<Net::SecurityCenter::API::Feed> using L<Net::SecurityCenter::REST> class.
 

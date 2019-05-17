@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 my $common_template = {
     tool => {
@@ -96,6 +96,7 @@ sub get {
     my $source     = delete( $params->{'source'} );
     my $sort_dir   = delete( $params->{'sort_dir'} );
     my $sort_field = delete( $params->{'sort_field'} );
+    my $view       = delete( $params->{'view'} );
 
     # Pagination
     my $count = 0;
@@ -157,6 +158,14 @@ sub get {
         $analysis_params->{'sortField'} = $sort_field;
     }
 
+    if ($view) {
+        $analysis_params->{'view'} = $view;
+    }
+
+    if ($scan_id) {
+        $analysis_params->{'scanID'} = $scan_id;
+    }
+
     # Add pagination
     if ( $page eq 'all' ) {
         $analysis_params->{'query'}->{'startOffset'} = 0;
@@ -173,7 +182,10 @@ sub get {
 
     while ( $total > $count ) {
 
-        my $result = $self->rest->post( '/analysis', $analysis_params );
+        my $result = $self->client->post( '/analysis', $analysis_params );
+
+        return if ( !$result );
+
         push( @results, @{ $result->{'results'} } );
 
         $total = $result->{'totalRecords'};
@@ -188,7 +200,7 @@ sub get {
 
     }
 
-    return @results;
+    return \@results;
 
 }
 
@@ -427,7 +439,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::Analysis->new ( $rest )
+=head2 Net::SecurityCenter::API::Analysis->new ( $client )
 
 Create a new instance of B<Net::SecurityCenter::API::Analysis> using L<Net::SecurityCenter::REST> class.
 

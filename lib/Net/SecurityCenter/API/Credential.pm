@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 my $common_template = {
 
@@ -47,13 +47,11 @@ sub list {
     };
 
     my $params      = sc_check_params( $tmpl, \%args );
-    my $credentials = $self->rest->get( '/credential', $params );
+    my $credentials = $self->client->get( '/credential', $params );
     my $raw         = delete( $params->{'raw'} );
 
-    if ($raw) {
-        return $credentials;
-    }
-
+    return if ( !$credentials );
+    return $credentials if ($raw);
     return sc_merge($credentials);
 
 }
@@ -71,8 +69,10 @@ sub get {
 
     my $params        = sc_check_params( $tmpl, \%args );
     my $credential_id = delete( $params->{'id'} );
+    my $credential    = $self->client->get( "/credential/$credential_id", $params );
 
-    return $self->rest->get( "/credential/$credential_id", $params );
+    return if ( !$credential );
+    return $credential;
 
 }
 
@@ -117,7 +117,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::Credential->new ( $rest )
+=head2 Net::SecurityCenter::API::Credential->new ( $client )
 
 Create a new instance of B<Net::SecurityCenter::API::Credential> using L<Net::SecurityCenter::REST> class.
 

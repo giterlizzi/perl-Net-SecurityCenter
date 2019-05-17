@@ -7,7 +7,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 #-------------------------------------------------------------------------------
 # METHODS
@@ -26,7 +26,7 @@ sub get_status {
 
     my $params = sc_check_params( $tmpl, \%args );
     my $raw    = delete( $params->{'raw'} );
-    my $status = $self->rest->get( '/status', $params );
+    my $status = $self->client->get( '/status', $params );
 
     if ($raw) {
         return $status;
@@ -46,7 +46,11 @@ sub get_info {
 
     my $params = sc_check_params( $tmpl, \%args );
     my $raw    = delete( $params->{'raw'} );
-    my $info   = $self->rest->get('/system');
+    my $info   = $self->client->get('/system');
+
+    if ( !$info ) {
+        return;
+    }
 
     if ($raw) {
         return $info;
@@ -66,7 +70,11 @@ sub get_diagnostics_info {
 
     my $params = sc_check_params( $tmpl, \%args );
     my $raw    = delete( $params->{'raw'} );
-    my $info   = $self->rest->get('/system/diagnostics');
+    my $info   = $self->client->get('/system/diagnostics');
+
+    if ( !$info ) {
+        return;
+    }
 
     if ($raw) {
         return $info;
@@ -81,7 +89,7 @@ sub get_diagnostics_info {
 sub generate_diagnostics_app_status {
 
     my ($self) = @_;
-    $self->rest->post( '/system/diagnostics/generate', { 'task' => 'appStatus' } );
+    $self->client->post( '/system/diagnostics/generate', { 'task' => 'appStatus' } );
     return 1;
 
 }
@@ -106,7 +114,7 @@ sub generate_diagnostics_file {
     my $params  = sc_check_params( $tmpl, \%args );
     my $options = delete( $params->{'type'} );
 
-    return $self->rest->post( '/system/diagnostics/generate',
+    return $self->client->post( '/system/diagnostics/generate',
         { 'task' => 'diagnosticsFile', 'options' => \@{$options} } );
 
 }
@@ -116,7 +124,7 @@ sub generate_diagnostics_file {
 sub download_diagnostics {
 
     my ($self) = @_;
-    return $self->rest->post('/system/diagnostics/download');
+    return $self->client->post('/system/diagnostics/download');
 
 }
 
@@ -161,7 +169,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::System->new ( $rest )
+=head2 Net::SecurityCenter::API::System->new ( $client )
 
 Create a new instance of B<Net::SecurityCenter::API::System> using L<Net::SecurityCenter::REST> class.
 

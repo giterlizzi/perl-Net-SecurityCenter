@@ -5,7 +5,9 @@ use warnings;
 use Test::More;
 
 require_ok('Net::SecurityCenter');
+require_ok('Net::SecurityCenter::Error');
 require_ok('Net::SecurityCenter::REST');
+require_ok('Net::SecurityCenter::Utils');
 
 require_ok('Net::SecurityCenter::API::Analysis');
 require_ok('Net::SecurityCenter::API::Credential');

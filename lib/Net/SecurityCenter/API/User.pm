@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 my $common_template = {
 
@@ -45,7 +45,11 @@ sub list {
 
     my $params = sc_check_params( $tmpl, \%args );
 
-    return $self->rest->get( '/user', $params );
+    my $response = $self->client->get( '/user', $params );
+
+    return if ( !$response );
+
+    return $response;
 
 }
 
@@ -64,7 +68,10 @@ sub get {
 
     my $user_id = delete( $params->{'id'} );
 
-    return $self->rest->get( "/user/$user_id", $params );
+    my $response = $self->client->get( "/user/$user_id", $params );
+
+    return if ( !$response );
+    return $response;
 
 }
 
@@ -109,7 +116,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::User->new ( $rest )
+=head2 Net::SecurityCenter::API::User->new ( $client )
 
 Create a new instance of B<Net::SecurityCenter::API::User> using L<Net::SecurityCenter::REST> class.
 

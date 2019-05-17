@@ -6,6 +6,7 @@ use strict;
 use Carp;
 
 use Net::SecurityCenter::REST;
+use Net::SecurityCenter::Error;
 
 require Net::SecurityCenter::API::Analysis;
 require Net::SecurityCenter::API::Credential;
@@ -23,7 +24,7 @@ require Net::SecurityCenter::API::System;
 require Net::SecurityCenter::API::User;
 require Net::SecurityCenter::API::Zone;
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 #-------------------------------------------------------------------------------
 # CONSTRUCTOR
@@ -33,31 +34,31 @@ sub new {
 
     my ( $class, $host, $options ) = @_;
 
-    my $rest = Net::SecurityCenter::REST->new( $host, $options );
+    my $client = Net::SecurityCenter::REST->new( $host, $options ) or return;
 
     my $self = {
         host    => $host,
         options => $options,
-        rest    => $rest,
+        client  => $client,
     };
 
     bless $self, $class;
 
-    $self->{'analysis'}      = Net::SecurityCenter::API::Analysis->new($rest);
-    $self->{'credential'}    = Net::SecurityCenter::API::Credential->new($rest);
-    $self->{'feed'}          = Net::SecurityCenter::API::Feed->new($rest);
-    $self->{'file'}          = Net::SecurityCenter::API::File->new($rest);
-    $self->{'plugin'}        = Net::SecurityCenter::API::Plugin->new($rest);
-    $self->{'plugin_family'} = Net::SecurityCenter::API::PluginFamily->new($rest);
-    $self->{'policy'}        = Net::SecurityCenter::API::Policy->new($rest);
-    $self->{'report'}        = Net::SecurityCenter::API::Report->new($rest);
-    $self->{'repository'}    = Net::SecurityCenter::API::Repository->new($rest);
-    $self->{'scan'}          = Net::SecurityCenter::API::Scan->new($rest);
-    $self->{'scan_result'}   = Net::SecurityCenter::API::ScanResult->new($rest);
-    $self->{'scanner'}       = Net::SecurityCenter::API::Scanner->new($rest);
-    $self->{'system'}        = Net::SecurityCenter::API::System->new($rest);
-    $self->{'user'}          = Net::SecurityCenter::API::User->new($rest);
-    $self->{'zone'}          = Net::SecurityCenter::API::Zone->new($rest);
+    $self->{'analysis'}      = Net::SecurityCenter::API::Analysis->new($client);
+    $self->{'credential'}    = Net::SecurityCenter::API::Credential->new($client);
+    $self->{'feed'}          = Net::SecurityCenter::API::Feed->new($client);
+    $self->{'file'}          = Net::SecurityCenter::API::File->new($client);
+    $self->{'plugin'}        = Net::SecurityCenter::API::Plugin->new($client);
+    $self->{'plugin_family'} = Net::SecurityCenter::API::PluginFamily->new($client);
+    $self->{'policy'}        = Net::SecurityCenter::API::Policy->new($client);
+    $self->{'report'}        = Net::SecurityCenter::API::Report->new($client);
+    $self->{'repository'}    = Net::SecurityCenter::API::Repository->new($client);
+    $self->{'scan'}          = Net::SecurityCenter::API::Scan->new($client);
+    $self->{'scan_result'}   = Net::SecurityCenter::API::ScanResult->new($client);
+    $self->{'scanner'}       = Net::SecurityCenter::API::Scanner->new($client);
+    $self->{'system'}        = Net::SecurityCenter::API::System->new($client);
+    $self->{'user'}          = Net::SecurityCenter::API::User->new($client);
+    $self->{'zone'}          = Net::SecurityCenter::API::Zone->new($client);
 
     return $self;
 
@@ -67,10 +68,25 @@ sub new {
 # COMMON METHODS
 #-------------------------------------------------------------------------------
 
-sub rest {
+sub client {
 
     my ($self) = @_;
-    return $self->{'rest'};
+    return $self->{'client'};
+
+}
+
+#-------------------------------------------------------------------------------
+
+sub error {
+
+    my ( $self, $message, $code ) = @_;
+
+    if ( defined $message ) {
+        $self->{'client'}->{'_error'} = Net::SecurityCenter::Error->new( $message, $code );
+        return;
+    } else {
+        return $self->{'client'}->{'_error'};
+    }
 
 }
 
@@ -82,7 +98,7 @@ sub login {
 
     ( @_ == 3 ) or croak(q/Usage: $sc->login(USERNAME, PASSWORD)/);
 
-    $self->rest->login( $username, $password );
+    $self->client->login( $username, $password ) or return;
     return 1;
 
 }
@@ -92,7 +108,7 @@ sub login {
 sub logout {
 
     my ($self) = @_;
-    $self->rest->logout();
+    $self->client->logout() or return;
     return 1;
 
 }
@@ -297,7 +313,7 @@ the REST request and response messages.
 
 =head1 COMMON METHODS
 
-=head2 $sc->rest ()
+=head2 $sc->client ()
 
 Return the instance of L<Net::SecurityCenter::REST> class
 

@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 my $common_template = {
 
@@ -43,7 +43,11 @@ sub list {
 
     my $params   = sc_check_params( $tmpl, \%args );
     my $raw      = delete( $params->{'raw'} );
-    my $scanners = $self->rest->get( '/scanner', $params );
+    my $scanners = $self->client->get( '/scanner', $params );
+
+    if ( !$scanners ) {
+        return;
+    }
 
     if ($raw) {
         return $scanners;
@@ -68,12 +72,10 @@ sub get {
     my $params     = sc_check_params( $tmpl, \%args );
     my $scanner_id = delete( $params->{'id'} );
     my $raw        = delete( $params->{'raw'} );
-    my $scanner    = $self->rest->get( "/scanner/$scanner_id", $params );
+    my $scanner    = $self->client->get( "/scanner/$scanner_id", $params );
 
-    if ($raw) {
-        return $scanner;
-    }
-
+    return if ( !$scanner );
+    return $scanner if ($raw);
     return sc_normalize_hash($scanner);
 
 }
@@ -91,6 +93,7 @@ sub get_status {
 
     my $scanner = $self->get( id => $scanner_id, fields => [ 'id', 'status' ] );
 
+    return if ( !$scanner );
     return sc_decode_scanner_status( $scanner->{'status'} );
 
 }
@@ -145,7 +148,7 @@ Decode Nessus scanner status.
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::Scanner->new ( $rest )
+=head2 Net::SecurityCenter::API::Scanner->new ( $client )
 
 Create a new instance of B<Net::SecurityCenter::API::Scanner> using L<Net::SecurityCenter::REST> class.
 

@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 #-------------------------------------------------------------------------------
 # METHODS
@@ -21,7 +21,9 @@ sub upload {
 
     ( @_ == 2 ) or croak( 'Usage: ' . __PACKAGE__ . '->upload( $FILE )' );
 
-    my $response = $self->rest->upload($file);
+    my $response = $self->client->upload($file);
+
+    return if ( !$response );
     return $response->{filename};
 
 }
@@ -34,7 +36,9 @@ sub clear {
 
     ( @_ == 2 ) or croak( 'Usage: ' . __PACKAGE__ . '->clear( $FILE )' );
 
-    $self->rest->post( '/file/clear', { filename => $file } );
+    my $response = $self->client->post( '/file/clear', { filename => $file } );
+
+    return if ( !$response );
     return 1;
 
 }
@@ -80,7 +84,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::File->new ( $rest )
+=head2 Net::SecurityCenter::API::File->new ( $client )
 
 Create a new instance of B<Net::SecurityCenter::API::File> using L<Net::SecurityCenter::REST> class.
 

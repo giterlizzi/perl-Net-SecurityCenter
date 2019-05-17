@@ -10,7 +10,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 my $common_template = {
 
@@ -49,12 +49,10 @@ sub list {
 
     my $params  = sc_check_params( $tmpl, \%args );
     my $raw     = delete( $params->{'raw'} );
-    my $reports = $self->rest->get( '/report', $params );
+    my $reports = $self->client->get( '/report', $params );
 
-    if ($raw) {
-        return $reports;
-    }
-
+    return if ( !$reports );
+    return $reports if ($raw);
     return sc_merge($reports);
 
 }
@@ -76,12 +74,10 @@ sub get {
     my $report_id = delete( $params->{'id'} );
     my $raw       = delete( $params->{'raw'} );
 
-    my $report = $self->rest->get( "/report/$report_id", $params );
+    my $report = $self->client->get( "/report/$report_id", $params );
 
-    if ($raw) {
-        return $report;
-    }
-
+    return if ( !$report );
+    return $report if ($raw);
     return sc_normalize_hash($report);
 
 }
@@ -102,7 +98,7 @@ sub download {
     my $report_id = delete( $params->{'id'} );
     my $filename  = delete( $params->{'filename'} );
 
-    my $report_data = $self->rest->post("/report/$report_id/download");
+    my $report_data = $self->client->post("/report/$report_id/download");
 
     return $report_data if ( !$filename );
 
@@ -159,7 +155,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::Report->new ( $rest )
+=head2 Net::SecurityCenter::API::Report->new ( $client )
 
 Create a new instance of B<Net::SecurityCenter::API::Report> using L<Net::SecurityCenter::REST> class.
 

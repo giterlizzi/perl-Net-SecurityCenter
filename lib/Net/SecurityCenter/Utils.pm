@@ -8,7 +8,7 @@ use Params::Check qw(allow);
 use Time::Piece;
 use Exporter qw(import);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 our @EXPORT_OK = qw(
     sc_check_params
@@ -19,6 +19,7 @@ our @EXPORT_OK = qw(
     sc_normalize_hash
     sc_normalize_array
     sc_method_usage
+    sc_schedule
 );
 
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
@@ -51,6 +52,48 @@ our $NESSUS_SCANNER_STATUS = {
 #-------------------------------------------------------------------------------
 # FUNCTIONS
 #-------------------------------------------------------------------------------
+
+sub sc_schedule {
+
+    my (%args) = @_;
+    use Data::Dumper;
+    print Dumper( \%args );
+    my $tmpl = {
+        type => {
+            allow    => [ 'dependent', 'ical', 'never', 'rollover', 'template', 'now' ],
+            default  => 'never',
+            required => 1,
+        },
+        start       => {},
+        repeat_rule => {
+            remap => 'repeatRule',
+        },
+    };
+
+    my $params = sc_check_params( $tmpl, \%args );
+
+    if ( $params->{'type'} eq 'now' ) {
+
+        return {
+            'repeatRule' => 'FREQ=NOW;INTERVAL=1',
+            'type'       => 'now'
+        };
+
+    }
+
+    if ( $params->{'type'} eq 'ical' ) {
+
+        return {
+            'type'       => 'ical',
+            'start'      => $params->{'start'},
+            'repeatRule' => $params->{'repeatRule'},
+        };
+
+    }
+
+    return $params;
+
+}
 
 sub sc_method_usage {
 

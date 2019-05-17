@@ -12,7 +12,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 my $common_template = {
 
@@ -116,11 +116,10 @@ sub list {
 
     my $params  = sc_check_params( $tmpl, \%args );
     my $raw     = delete( $params->{'raw'} );
-    my $plugins = $self->rest->get( '/plugin', $params );
+    my $plugins = $self->client->get( '/plugin', $params );
 
-    if ($raw) {
-        return $plugins;
-    }
+    return if ( !$plugins );
+    return $plugins if ($raw);
 
     return sc_normalize_array($plugins);
 
@@ -141,11 +140,10 @@ sub get {
     my $params    = sc_check_params( $tmpl, \%args );
     my $raw       = delete( $params->{'raw'} );
     my $plugin_id = delete( $params->{'id'} );
-    my $plugin    = $self->rest->get( "/plugin/$plugin_id", $params );
+    my $plugin    = $self->client->get( "/plugin/$plugin_id", $params );
 
-    if ($raw) {
-        return $plugin;
-    }
+    return if ( !$plugin );
+    return $plugin if ($raw);
 
     return sc_normalize_hash($plugin);
 
@@ -166,7 +164,7 @@ sub download {
     my $plugin_id = delete( $params->{'id'} );
     my $filename  = delete( $params->{'filename'} );
 
-    my $plugin_data   = $self->rest->get( "/plugin/$plugin_id", { 'fields' => 'id,source' } )->{'source'};
+    my $plugin_data   = $self->client->get( "/plugin/$plugin_id", { 'fields' => 'id,source' } )->{'source'};
     my $plugin_source = decode_base64($plugin_data);
 
     return $plugin_source if ( !$filename );
@@ -230,7 +228,7 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::Plugin->new ( $rest )
+=head2 Net::SecurityCenter::API::Plugin->new ( $client )
 
 Create a new instance of B<Net::SecurityCenter::API::Plugin> using L<Net::SecurityCenter::REST> class.
 

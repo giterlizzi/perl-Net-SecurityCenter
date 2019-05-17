@@ -1,9 +1,9 @@
-package Net::SecurityCenter::API;
+package Net::SecurityCenter::Error;
 
 use warnings;
 use strict;
 
-use Net::SecurityCenter::Error;
+use overload q|""| => 'message', fallback => 1;
 
 our $VERSION = '0.100_30';
 
@@ -13,11 +13,11 @@ our $VERSION = '0.100_30';
 
 sub new {
 
-    my ( $class, $client ) = @_;
+    my ( $class, $message, $code ) = @_;
 
     my $self = {
-        client => $client,
-        _error => undef,
+        message => $message,
+        code    => $code,
     };
 
     return bless $self, $class;
@@ -26,26 +26,16 @@ sub new {
 
 #-------------------------------------------------------------------------------
 
-sub client {
-
+sub message {
     my ($self) = @_;
-    return $self->{client};
-
+    return $self->{'message'};
 }
 
 #-------------------------------------------------------------------------------
 
-sub error {
-
-    my ( $self, $message, $code ) = @_;
-
-    if ( defined $message ) {
-        $self->{'client'}->{'_error'} = Net::SecurityCenter::Error->new( $message, $code );
-        return;
-    } else {
-        return $self->{'client'}->{'_error'};
-    }
-
+sub code {
+    my ($self) = @_;
+    return $self->{'code'};
 }
 
 #-------------------------------------------------------------------------------
@@ -53,39 +43,32 @@ sub error {
 1;
 
 __END__
+
 =pod
 
 =encoding UTF-8
 
-
 =head1 NAME
 
-Net::SecurityCenter::API - API Base Class for Net::Security::Center
+Net::SecurityCenter::Error - Error helper for Net::SecurityCenter
 
 
 =head1 SYNOPSIS
 
     use Net::SecurityCenter;
 
-    my $sc = Net::SecurityCenter('sc.example.org');
+    my $sc = Net::SecurityCenter('sc.example.org') or die "Error : " . $@;
 
     $sc->login('secman', 'password');
 
-    $scan->logout();
+    if ($sc->error) {
+        die $sc->error;
+    }
+
+    $sc->logout();
 
 
 =head1 DESCRIPTION
-
-This module provides Perl scripts easy way to interface the REST API of Tenable.sc
-(SecurityCenter).
-
-For more information about the Tenable.sc (SecurityCenter) REST API follow the online documentation:
-
-L<https://docs.tenable.com/sccv/api/index.html>
-
-
-=head1 METHODS
-
 
 =head1 SUPPORT
 

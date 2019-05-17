@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 my $common_template = {
 
@@ -42,12 +42,13 @@ sub list {
     };
 
     my $params = sc_check_params( $tmpl, \%args );
-    my $zones  = $self->rest->get( '/zone', $params );
-    my $raw    = delete( $params->{'raw'} );
+    my $zones  = $self->client->get( '/zone', $params );
 
-    if ($raw) {
-        return $zones;
-    }
+    return if ( !$zones );
+
+    my $raw = delete( $params->{'raw'} );
+
+    return $zones if ($raw);
 
     return sc_normalize_array($zones);
 
@@ -68,12 +69,10 @@ sub get {
     my $params  = sc_check_params( $tmpl, \%args );
     my $zone_id = delete( $params->{'id'} );
     my $raw     = delete( $params->{'raw'} );
-    my $zone    = $self->rest->get( "/zone/$zone_id", $params );
+    my $zone    = $self->client->get( "/zone/$zone_id", $params );
 
-    if ($raw) {
-        return $zone;
-    }
-
+    return if ( !$zone );
+    return $zone if ($raw);
     return sc_normalize_hash($zone);
 
 }
@@ -117,7 +116,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::Zone->new ( $rest )
+=head2 Net::SecurityCenter::API::Zone->new ( $client )
 
 Create a new instance of B<Net::SecurityCenter::API::Zone> using L<Net::SecurityCenter::REST> class.
 

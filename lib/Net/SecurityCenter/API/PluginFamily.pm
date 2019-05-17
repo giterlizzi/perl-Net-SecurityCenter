@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 my $common_template = {
 
@@ -101,8 +101,11 @@ sub list {
         op             => $common_template->{'op'},
     };
 
-    my $params = sc_check_params( $tmpl, \%args );
-    return $self->rest->get( '/pluginFamily', $params );
+    my $params   = sc_check_params( $tmpl, \%args );
+    my $response = $self->client->get( '/pluginFamily', $params );
+
+    return if ( !$response );
+    return $response;
 
 }
 
@@ -128,12 +131,10 @@ sub list_plugins {
     my $params           = sc_check_params( $tmpl, \%args );
     my $raw              = delete( $params->{'raw'} );
     my $plugin_family_id = delete( $params->{'id'} );
-    my $plugins          = $self->rest->get( "/pluginFamily/$plugin_family_id/plugins", $params );
+    my $plugins          = $self->client->get( "/pluginFamily/$plugin_family_id/plugins", $params );
 
-    if ($raw) {
-        return $plugins;
-    }
-
+    return if ( !$plugins );
+    return $plugins if ($raw);
     return sc_normalize_array($plugins);
 
 }
@@ -152,7 +153,10 @@ sub get {
     my $params           = sc_check_params( $tmpl, \%args );
     my $plugin_family_id = delete( $params->{'id'} );
 
-    return $self->rest->get( "/pluginFamily/$plugin_family_id", $params );
+    my $response = $self->client->get( "/pluginFamily/$plugin_family_id", $params );
+
+    return if ( !$response );
+    return $response;
 
 }
 
@@ -197,7 +201,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::PluginFamily->new ( $rest )
+=head2 Net::SecurityCenter::API::PluginFamily->new ( $client )
 
 Create a new instance of B<Net::SecurityCenter::API::PluginFamily> using L<Net::SecurityCenter::REST> class.
 

@@ -11,7 +11,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 my $common_template = {
 
@@ -52,7 +52,7 @@ sub download {
     my $scan_result_id = delete( $params->{'id'} );
     my $filename       = delete( $params->{'filename'} );
 
-    my $sc_scan_data     = $self->rest->post( "/scanResult/$scan_result_id/download", { 'downloadType' => 'v2' } );
+    my $sc_scan_data     = $self->client->post( "/scanResult/$scan_result_id/download", { 'downloadType' => 'v2' } );
     my $nessus_scan_data = q{};
 
     if ($sc_scan_data) {
@@ -95,7 +95,7 @@ sub list {
 
     my $params = sc_check_params( $tmpl, \%args );
     my $raw    = delete( $params->{'raw'} );
-    my $scans  = $self->rest->get( '/scanResult', $params );
+    my $scans  = $self->client->get( '/scanResult', $params );
 
     if ($raw) {
         return $scans;
@@ -153,7 +153,7 @@ sub get {
     my $scan_result_id = delete( $params->{'id'} );
     my $raw            = delete( $params->{'raw'} );
 
-    my $scan_result = $self->rest->get( "/scanResult/$scan_result_id", $params );
+    my $scan_result = $self->client->get( "/scanResult/$scan_result_id", $params );
 
     if ($raw) {
         return $scan_result;
@@ -214,7 +214,7 @@ sub pause {
     my $params         = sc_check_params( $tmpl, \%args );
     my $scan_result_id = delete( $params->{'id'} );
 
-    $self->rest->post("/scanResult/$scan_result_id/pause");
+    $self->client->post("/scanResult/$scan_result_id/pause");
     return 1;
 
 }
@@ -230,7 +230,7 @@ sub resume {
     my $params         = sc_check_params( $tmpl, \%args );
     my $scan_result_id = delete( $params->{'id'} );
 
-    $self->rest->post("/scanResult/$scan_result_id/resume");
+    $self->client->post("/scanResult/$scan_result_id/resume");
     return 1;
 
 }
@@ -246,7 +246,7 @@ sub stop {
     my $params         = sc_check_params( $tmpl, \%args );
     my $scan_result_id = delete( $params->{'id'} );
 
-    $self->rest->post("/scanResult/$scan_result_id/stop");
+    $self->client->post("/scanResult/$scan_result_id/stop");
     return 1;
 
 }
@@ -292,7 +292,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::ScanResult->new ( $rest )
+=head2 Net::SecurityCenter::API::ScanResult->new ( $client )
 
 Create a new instance of B<Net::SecurityCenter::API::ScanResult> using L<Net::SecurityCenter::REST> class.
 

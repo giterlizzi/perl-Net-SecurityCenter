@@ -11,7 +11,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 my $common_template = {
 
@@ -147,7 +147,9 @@ sub add {
             remap => 'timeoutAction',
         },
         schedule => {
-            allow => [ 'dependent', 'ical', 'never', 'rollover', 'template', 'now' ]
+            filter => sub {
+                return sc_schedule( %{ $_[0] } );
+            },
         },
         rollover => {
             allow => [ 'nextDay', 'template' ],
@@ -167,18 +169,7 @@ sub add {
         $params->{'type'} = ( $params->{'policy'} ) ? 'policy' : 'plugin';
     }
 
-    # TODO Add other schedule type facility
-    #      Add util for write in ICAL format
-    if ( defined $params->{'schedule'} ) {
-        if ( $params->{'schedule'} eq 'now' ) {
-            $params->{'schedule'} = {
-                'repeatRule' => 'FREQ=NOW;INTERVAL=1',
-                'type'       => 'now'
-            };
-        }
-    }
-
-    my $result = $self->rest->post( '/scan', $params );
+    my $result = $self->client->post( '/scan', $params );
 
     # Return the Scan Result ID for schedule=now scans
     if ( defined( $result->{'scanResultID'} ) ) {
@@ -198,7 +189,7 @@ sub execute {
 
     my ( $self, %params ) = @_;
 
-    $params{'schedule'} = 'now';
+    $params{'schedule'} = { 'type' => 'now' };
 
     return $self->add(%params);
 
@@ -218,10 +209,10 @@ sub launch {
 
     my $params  = sc_check_params( $tmpl, \%args );
     my $scan_id = delete( $params->{'id'} );
-    my $result  = $self->rest->post( "/scan/$scan_id/launch", $params );
+    my $result  = $self->client->post( "/scan/$scan_id/launch", $params );
 
     if ( !defined( $result->{'scanResult'}->{'id'} ) ) {
-        croak('Invalid response from SecurityCenter');
+        croak('Invalid response from SecurityCenter');    # TODO
     }
 
     return $result->{'scanResult'}->{'id'};
@@ -242,12 +233,10 @@ sub list {
 
     my $params = sc_check_params( $tmpl, \%args );
     my $raw    = delete( $params->{'raw'} );
-    my $scans  = $self->rest->get( '/scan', $params );
+    my $scans  = $self->client->get( '/scan', $params );
 
-    if ($raw) {
-        return $scans;
-    }
-
+    return if ( !$scans );
+    return $scans if ($raw);
     return sc_merge($scans);
 }
 
@@ -265,12 +254,10 @@ sub get {
     my $params  = sc_check_params( $tmpl, \%args );
     my $scan_id = delete( $params->{'id'} );
     my $raw     = delete( $params->{'raw'} );
-    my $scan    = $self->rest->get( "/scan/$scan_id", $params );
+    my $scan    = $self->client->get( "/scan/$scan_id", $params );
 
-    if ($raw) {
-        return $scan;
-    }
-
+    return if ( !$scan );
+    return $scan if ($scan);
     return sc_normalize_hash($scan);
 
 }
@@ -286,7 +273,7 @@ sub delete {
     my $params  = sc_check_params( $tmpl, \%args );
     my $scan_id = delete( $params->{'id'} );
 
-    return $self->rest->delete("/scan/$scan_id");
+    return $self->client->delete("/scan/$scan_id");    # TODO
 
 }
 
@@ -340,7 +327,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::Scan->new ( $rest )
+=head2 Net::SecurityCenter::API::Scan->new ( $client )
 
 Create a new instance of B<Net::SecurityCenter::API::Scan> using L<Net::SecurityCenter::REST> class.
 

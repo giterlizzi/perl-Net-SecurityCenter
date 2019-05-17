@@ -13,7 +13,7 @@ use JSON;
 
 use Data::Dumper;
 
-our $VERSION = '0.100_10';
+our $VERSION = '0.100_20';
 
 sub error {
     my ($error) = @_;
@@ -22,29 +22,12 @@ sub error {
     exit(255);
 }
 
-# Try & Catch
-
-sub try(&;$) {
-
-    my ( $try, $catch ) = @_;
-
-    eval {&$try};
-
-    if ($@) {
-        &$catch($@);
-    }
-
-}
-
-sub catch(&) {
-    shift;
-}
-
 my @options = (
 
     'help|h',
     'man',
     'version',
+    'verbose',
 
     'hostname=s',
     'username=s',
@@ -59,12 +42,14 @@ my @options = (
 my $options = {};
 my $params  = {};
 my $results = {};
-my $sc;
 
 GetOptions( $options, @options ) or pod2usage( -verbose => 0 );
 
 my $api    = $ARGV[0] || undef;
 my $method = $ARGV[1] || undef;
+
+$api    =~ s/-/_/g if ($api);
+$method =~ s/-/_/g if ($method);
 
 pod2usage(1) if ( $options->{'help'} );
 
@@ -108,34 +93,21 @@ if ( !$options->{'password'} ) {
 
 }
 
-my $dispatch_table = {
-    'request' => sub {
-        $options->{'params'} ||= '{}';
-        $sc->rest->request( $options->{'method'}, $options->{'path'}, decode_json( $options->{'params'} ) );
-    },
-};
+my $sc_options = {};
 
-try {
-    $sc = Net::SecurityCenter->new( $options->{'hostname'} );
-} catch {
-    error(@_);
-};
-
-if ( !$sc->can($api) || !$sc->$api->can($method) ) {
-    error("Unkown $api $method command");
+if ( $options->{'verbose'} ) {
+    $sc_options->{'logger'} = Net::SecurityCenter::LoggerSimple->new;
 }
 
-try {
-    $sc->login( $options->{'username'}, $options->{'password'} );
-} catch {
-    error(@_);
-};
+my $sc = Net::SecurityCenter->new( $options->{'hostname'}, $sc_options ) or error($@);
 
-try {
-    $results = $sc->$api->$method( %{$params} );
-} catch {
-    error(@_);
-};
+if ( !$sc->can($api) || !$sc->$api->can($method) ) {
+    error("Unknown $api $method command");
+}
+
+$sc->login( $options->{'username'}, $options->{'password'} ) or error( $sc->error );
+
+$results = $sc->$api->$method( %{$params} ) or error( $sc->error );
 
 if ( ref $results eq 'ARRAY' || ref $results eq 'HASH' ) {
 
@@ -169,6 +141,39 @@ if ( ref $results eq 'ARRAY' || ref $results eq 'HASH' ) {
 print "$results\n";
 exit(0);
 
+package Net::SecurityCenter::LoggerSimple;
+
+use Test::More;
+
+sub new {
+    my $class = shift;
+    return bless {}, $class;
+}
+
+sub info {
+    my ( $self, $message ) = @_;
+    print STDERR "INFO - $message\n";
+    return;
+}
+
+sub debug {
+    my ( $self, $message ) = @_;
+    print STDERR "DEBUG - $message\n";
+    return;
+}
+
+sub warning {
+    my ( $self, $message ) = @_;
+    print STDERR "WARNING - $message\n";
+    return;
+}
+
+sub error {
+    my ( $self, $message ) = @_;
+    print STDERR "ERROR - $message\n";
+    return;
+}
+
 __END__
 =encoding utf-8
 
@@ -181,7 +186,22 @@ sc-api - Tenable.sc (SecurityCenter) API command line interface
     sc-api [COMMAND] [OPTIONS]
 
     Commands:
-        request             Execute RAW REST request
+
+        analysis
+        credential
+        feed
+        file
+        plugin
+        plugin-family
+        policy
+        report
+        repository
+        scan
+        scan-result
+        scanner
+        system
+        user
+        zone
 
     Options:
         --help              Brief help message
@@ -202,28 +222,66 @@ C<sc-api> Tenable.sc (SecurityCenter) API command line interface.
 
 =head1 COMMANDS
 
-=head2 request
+=head2 analysis
 
-Execute RAW REST request to Tenable.sc (SecurityCenter).
+See L<Net::SecurityCenter::Analysis> class.
 
-For more information about the Tenable.sc (SecurityCenter) REST API follow the online documentation:
+=head2 credential
 
-=over 4
+See L<Net::SecurityCenter::Analysis> class.
 
-=item * L<https://docs.tenable.com/sccv/api/index.html>
+=head2 feed
 
-=back
+See L<Net::SecurityCenter::Feed> class.
 
-=head3 Options
+=head2 file
 
-    --method    HTTP Request method (GET, POST, HEAD, DELETE, PUT, PATCH)
-    --path      REST API path (eg. /scan, /policy/1)
-    --params    Params in JSON format (eg. {"fields":"id,name,description"})
+See L<Net::SecurityCenter::File> class.
 
-=head3 Example
+=head2 plugin
 
-    sc-api request --method GET --path /scan --params '{ "fields":"id,name" }' \
-            --hostname sc.example.org --username secman --password password
+See L<Net::SecurityCenter::Plugin> class.
+
+=head2 plugin-family
+
+See L<Net::SecurityCenter::PluginFamily> class.
+
+=head2 policy
+
+See L<Net::SecurityCenter::Policy> class.
+
+=head2 report
+
+See L<Net::SecurityCenter::Report> class.
+
+=head2 repository
+
+See L<Net::SecurityCenter::Repository> class.
+
+=head2 scan
+
+See L<Net::SecurityCenter::Scan> class.
+
+=head2 scan-result
+
+See L<Net::SecurityCenter::ScanResult> class.
+
+=head2 scanner
+
+See L<Net::SecurityCenter::Scanner> class.
+
+=head2 system
+
+See L<Net::SecurityCenter::System> class.
+
+=head2 user
+
+See L<Net::SecurityCenter::User> class.
+
+=head2 zone
+
+See L<Net::SecurityCenter::Zone> class.
+
 
 =head1 OPTIONS
 

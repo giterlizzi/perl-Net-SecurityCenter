@@ -12,7 +12,7 @@ use LWP::UserAgent;
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 #-------------------------------------------------------------------------------
 # CONSTRUCTOR
@@ -25,16 +25,18 @@ sub new {
     my $agent      = LWP::UserAgent->new();
     my $cookie_jar = HTTP::Cookies->new();
 
-    croak('Specify valid SecurityCenter hostname or IP address')
-        if ( !$host );
+    if ( !$host ) {
+        $@ = 'Specify valid Tenable.sc (SecurityCenter) hostname or IP address';    ## no critic
+        return;
+    }
 
     $agent->agent( _agent() );
     $agent->ssl_opts( verify_hostname => 0 );
 
     my $timeout  = delete( $options->{'timeout'} );
     my $ssl_opts = delete( $options->{'ssl_options'} ) || {};
-    my $logger   = delete( $options->{'logger'} )      || undef;
-    my $no_check = delete( $options->{'no_check'} )    || 0;
+    my $logger   = delete( $options->{'logger'} ) || undef;
+    my $no_check = delete( $options->{'no_check'} ) || 0;
 
     if ($timeout) {
         $agent->timeout($timeout);
@@ -53,12 +55,13 @@ sub new {
         token   => undef,
         agent   => $agent,
         logger  => $logger,
+        _error  => undef,
     };
 
     bless $self, $class;
 
     if ( !$no_check ) {
-        $self->_check();
+        $self->check();
     }
 
     return $self;
@@ -106,96 +109,63 @@ sub _trim {
 
 #-------------------------------------------------------------------------------
 
-sub _check {
+sub check {
 
     my ($self) = @_;
 
-    my $response = eval { $self->request( 'GET', '/system' ) };
+    my $response = $self->request( 'GET', '/system' );
 
-    croak( 'Failed to connect to Tenable.sc (SecurityCenter) : ', $self->{'host'} )
-        if ($EVAL_ERROR);
-
-    if ($response) {
-
-        $self->{'version'}  = $response->{'version'};
-        $self->{'build_id'} = $response->{'buildID'};
-        $self->{'license'}  = $response->{'licenseStatus'};
-        $self->{'uuid'}     = $response->{'uuid'};
-
-        if ( $self->{'logger'} ) {
-            $self->logger( 'info', 'Tenable.sc (SecurityCenter) ' . $self->{'version'} . ' (Build ID:' . $self->{'build_id'} . ')' );
-        }
-
+    if ( !$response ) {
+        $self->error( 'Failed to connect to Tenable.sc (SecurityCenter) : ', $self->{'host'}, 500 );
+        return;
     }
 
-    return;
+    $self->{'version'}  = $response->{'version'};
+    $self->{'build_id'} = $response->{'buildID'};
+    $self->{'license'}  = $response->{'licenseStatus'};
+    $self->{'uuid'}     = $response->{'uuid'};
 
-}
+    if ( $self->{'logger'} ) {
+        $self->logger( 'info',
+            'Tenable.sc (SecurityCenter) ' . $self->{'version'} . ' (Build ID:' . $self->{'build_id'} . ')' );
+    }
 
-#-------------------------------------------------------------------------------
-# REST METHODS
-#-------------------------------------------------------------------------------
-
-sub post {
-
-    my ( $self, $path, $params ) = @_;
-
-    ( @_ == 2 || ( @_ == 3 && ref $params eq 'HASH' ) )
-        or croak( 'Usage: ' . __PACKAGE__ . 'post( $PATH, [ \%PARAMS ] )' );
-
-    return $self->request( 'POST', $path, $params );
+    return 1;
 
 }
 
 #-------------------------------------------------------------------------------
 
-sub get {
+sub error {
 
-    my ( $self, $path, $params ) = @_;
+    my ( $self, $message, $code ) = @_;
 
-    ( @_ == 2 || ( @_ == 3 && ref $params eq 'HASH' ) )
-        or croak( 'Usage: ' . __PACKAGE__ . 'get( $PATH, [ \%PARAMS ] )' );
-
-    return $self->request( 'GET', $path, $params );
-
-}
-
-#-------------------------------------------------------------------------------
-
-sub put {
-
-    my ( $self, $path, $params ) = @_;
-
-    ( @_ == 2 || ( @_ == 3 && ref $params eq 'HASH' ) )
-        or croak( 'Usage: ' . __PACKAGE__ . 'put( $PATH, [ \%PARAMS ] )' );
-
-    return $self->request( 'PUT', $path, $params );
+    if ( defined $message ) {
+        $self->{'_error'} = Net::SecurityCenter::Error->new( $message, $code );
+        return;
+    } else {
+        return $self->{'_error'};
+    }
 
 }
 
 #-------------------------------------------------------------------------------
-
-sub delete {
-
-    my ( $self, $path, $params ) = @_;
-
-    ( @_ == 2 || ( @_ == 3 && ref $params eq 'HASH' ) )
-        or croak( 'Usage: ' . __PACKAGE__ . 'delete( $PATH, [ \%PARAMS ] )' );
-
-    return $self->request( 'DELETE', $path, $params );
-
-}
-
+# REST HELPER METHODS (get, head, put, post, delete and patch)
 #-------------------------------------------------------------------------------
 
-sub patch {
+for my $sub_name (qw/get head put post delete patch/) {
 
-    my ( $self, $path, $params ) = @_;
-
-    ( @_ == 2 || ( @_ == 3 && ref $params eq 'HASH' ) )
-        or croak( 'Usage: ' . __PACKAGE__ . 'patch( $PATH, [ \%PARAMS ] )' );
-
-    return $self->request( 'PATCH', $path, $params );
+    my $req_method = uc $sub_name;
+    no strict 'refs';    ## no critic
+    eval <<"HERE";       ## no critic
+    sub $sub_name {
+        my ( \$self, \$path, \$params ) = \@_;
+        my \$class = ref \$self;
+        ( \@_ == 2 || ( \@_ == 3 && ref \$params eq 'HASH' ) )
+            or croak("Usage: \$class->$sub_name( PATH, [HASHREF] )\n");
+        return \$self->request('$req_method', \$path, \$params || {});
+    }
+HERE
 
 }
 
@@ -267,12 +237,13 @@ sub request {
     my $response         = $agent->request($request);
     my $response_content = $response->content();
     my $response_ctype   = $response->headers->{'content-type'};
+    my $response_code    = $response->code();
 
     my $result  = {};
     my $is_json = ( $response_ctype =~ /application\/json/ );
 
     # Force JSON decode for 403 Forbidden message without JSON Content-Type header
-    if ( $response->code() == 403 && $response_ctype !~ /application\/json/ ) {
+    if ( $response_code == 403 && $response_ctype !~ /application\/json/ ) {
         $is_json = 1;
     }
 
@@ -307,7 +278,8 @@ sub request {
                     $self->logger( 'error', $error_msg );
                 }
 
-                croak $error_msg;
+                $self->error( $error_msg, $response_code );
+                return;
             }
 
         }
@@ -324,7 +296,8 @@ sub request {
             $self->logger( 'error', $error_msg );
         }
 
-        croak $error_msg;
+        $self->error( $error_msg, $response_code );
+        return;
 
     }
 
@@ -332,7 +305,8 @@ sub request {
         $self->logger( 'error', $response_content );
     }
 
-    croak $response_content;
+    $self->error( $response_content, $response_code );
+    return;
 
 }
 
@@ -387,6 +361,10 @@ sub login {
             password => $password
         }
     );
+
+    if ( !$response ) {
+        return;
+    }
 
     $self->{'token'} = $response->{'token'};
     $self->{'agent'}->default_header( 'X-SecurityCenter', $self->{'token'} );

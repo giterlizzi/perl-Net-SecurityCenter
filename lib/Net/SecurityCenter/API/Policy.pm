@@ -10,7 +10,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 my $common_template = {
 
@@ -49,12 +49,10 @@ sub list {
 
     my $params   = sc_check_params( $tmpl, \%args );
     my $raw      = delete( $params->{'raw'} );
-    my $policies = $self->rest->get( '/policy', $params );
+    my $policies = $self->client->get( '/policy', $params );
 
-    if ($raw) {
-        return $policies;
-    }
-
+    return if ( !$policies );
+    return $policies if ($raw);
     return sc_merge($policies);
 
 }
@@ -72,8 +70,11 @@ sub get {
 
     my $params    = sc_check_params( $tmpl, \%args );
     my $policy_id = delete( $params->{'id'} );
-    my $policy    = $self->rest->get( "/policy/$policy_id", $params );
+    my $raw       = delete( $params->{'raw'} );
+    my $policy    = $self->client->get( "/policy/$policy_id", $params );
 
+    return if ( !$policy );
+    return $policy if ($raw);
     return sc_normalize_hash($policy);
 
 }
@@ -94,7 +95,7 @@ sub download {
     my $policy_id = delete( $params->{'id'} );
     my $filename  = delete( $params->{'filename'} );
 
-    my $policy_data = $self->rest->post("/policy/$policy_id/export");
+    my $policy_data = $self->client->post("/policy/$policy_id/export");
 
     return $policy_data if ( !$filename );
 
@@ -151,7 +152,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::Policy->new ( $rest )
+=head2 Net::SecurityCenter::API::Policy->new ( $client )
 
 Create a new instance of B<Net::SecurityCenter::API::Policy> using L<Net::SecurityCenter::REST> class.
 

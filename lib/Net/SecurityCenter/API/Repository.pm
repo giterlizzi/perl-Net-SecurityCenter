@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.100_30';
 
 my $common_template = {
 
@@ -49,12 +49,10 @@ sub list {
 
     my $params       = sc_check_params( $tmpl, \%args );
     my $raw          = delete( $params->{'raw'} );
-    my $repositories = $self->rest->get( '/repository', $params );
+    my $repositories = $self->client->get( '/repository', $params );
 
-    if ($raw) {
-        return $repositories;
-    }
-
+    return if ( !$repositories );
+    return $repositories if ($raw);
     return sc_normalize_array($repositories);
 
 }
@@ -74,12 +72,10 @@ sub get {
     my $params        = sc_check_params( $tmpl, \%args );
     my $raw           = delete( $params->{'raw'} );
     my $repository_id = delete( $params->{'id'} );
-    my $repository    = $self->rest->get( "/repository/$repository_id", $params );
+    my $repository    = $self->client->get( "/repository/$repository_id", $params );
 
-    if ($raw) {
-        return $repository;
-    }
-
+    return if ( !$repository );
+    return $repository if ($raw);
     return sc_normalize_hash($repository);
 
 }
@@ -102,8 +98,10 @@ sub get_device_info {
 
     my $params        = sc_check_params( $tmpl, \%args );
     my $repository_id = delete( $params->{'id'} );
+    my $device_info   = $self->client->get( "/repository/$repository_id/deviceInfo", $params );
 
-    return $self->rest->get( "/repository/$repository_id/deviceInfo", $params );
+    return if ( !$device_info );
+    return $device_info;
 
 }
 
@@ -122,9 +120,11 @@ sub get_ip_info {
         }
     };
 
-    my $params = sc_check_params( $tmpl, \%args );
+    my $params  = sc_check_params( $tmpl, \%args );
+    my $ip_info = $self->client->get( "/ipInfo", $params );
 
-    return $self->rest->get( "/ipInfo", $params );
+    return if ( !$ip_info );
+    return $ip_info;
 
 }
 
@@ -169,7 +169,7 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::Repository->new ( $rest )
+=head2 Net::SecurityCenter::API::Repository->new ( $client )
 
 Create a new instance of B<Net::SecurityCenter::API::Repository> using L<Net::SecurityCenter::REST> class.
 
