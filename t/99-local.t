@@ -137,9 +137,9 @@ sub _test {
             my $scan = $sc->scan->get( id => 4 );
 
             ok( $scan, 'Scan API: Get Active Scan' );
-            cmp_ok( $scan->{'id'},             '==', 4,       'Get Scan ID' );
-            cmp_ok( $scan->{'policy'}->{'id'}, '==', 1000002, 'Get Scan Policy ID' );
-            cmp_ok( $sc->scan->launch( id => 2 ), '==', 3, 'Launch Scan ID' );
+            cmp_ok( $scan->{'id'},                '==', 4,       'Get Scan ID' );
+            cmp_ok( $scan->{'policy'}->{'id'},    '==', 1000002, 'Get Scan Policy ID' );
+            cmp_ok( $sc->scan->launch( id => 2 ), '==', 3,       'Launch Scan ID' );
 
         }
     );
