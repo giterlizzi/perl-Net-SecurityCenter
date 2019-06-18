@@ -6,9 +6,14 @@
 
 ```.pl
     use Net::SecurityCenter;
-    my $sc = Net::SecurityCenter('sc.example.org');
+    my $sc = Net::SecurityCenter('sc.example.org') or die "Error: $@";
 
     $sc->login('secman', 'password');
+
+    if ($sc->error) {
+      print "Failed login: " . $sc->error;
+      exit 0;
+    }
 
     my $running_scans = $sc->scan_result->list_running;
 

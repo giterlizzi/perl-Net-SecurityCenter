@@ -24,7 +24,7 @@ require Net::SecurityCenter::API::System;
 require Net::SecurityCenter::API::User;
 require Net::SecurityCenter::API::Zone;
 
-our $VERSION = '0.100_30';
+our $VERSION = '0.199_10';
 
 #-------------------------------------------------------------------------------
 # CONSTRUCTOR

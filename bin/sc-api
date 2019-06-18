@@ -10,12 +10,182 @@ use Pod::Usage;
 use Cwd;
 use Term::ReadKey;
 use JSON;
+use Carp;
+use English qw( -no_match_vars );
 
 use Data::Dumper;
 
-our $VERSION = '0.100_20';
+our $VERSION = '0.199_10';
 
-sub error {
+sub slurp {
+
+    my ($file) = @_;
+
+    open my $fh, '<', $file or cli_error("Can't open $file file: $OS_ERROR");
+
+    my $string = do {
+        local $/ = undef;
+        <$fh>;
+    };
+
+    close $fh or cli_error("Failed to close $file file: $OS_ERROR");
+
+    return $string;
+
+}
+
+sub config_parse_line {
+
+    my ($value) = @_;
+
+    return 1 if ( $value =~ /^(yes|true)$/s );
+    return 0 if ( $value =~ /^(no|false)$/s );
+
+    if ( $value =~ /\,/ ) {
+        return map { trim($_) } split( /,/, $value );
+    }
+
+    return $value;
+
+}
+
+sub config_parser {
+
+    my ($config_string) = @_;
+
+    my $section     = '_';    # Root section
+    my $config_data = {};
+
+    foreach my $line ( split( /\n/, $config_string ) ) {
+
+        chomp($line);
+
+        # skip comments and empty lines
+        next if ( $line =~ /^\s*(#|;)/ );
+        next if ( $line =~ /^\s*$/ );
+
+        if ( $line =~ /^\[(.*)\]\s*$/ ) {
+            $section = trim($1);
+            next;
+        }
+
+        if ( $line =~ /^([^=]+?)\s*=\s*(.*?)\s*$/ ) {
+
+            my ( $field, $raw_value ) = ( $1, $2 );
+            my $parsed_value = [ config_parse_line($raw_value) ];
+
+            my $value = ( ( @{$parsed_value} == 1 ) ? $parsed_value->[0] : $parsed_value );
+
+            if ( not defined $section ) {
+                $config_data->{$field} = $value;
+                next;
+            }
+
+            $config_data->{$section}->{$field} = $value;
+
+        }
+
+    }
+
+    return $config_data;
+
+}
+
+sub trim {
+
+    my $string = shift;
+    return $string unless ($string);
+
+    $string =~ s/^\s+|\s+$//g;
+    return $string;
+
+}
+
+sub table {
+
+    my (%args) = @_;
+
+    my $col_separator    = $args{'column_separator'} || ' ';
+    my $header_separator = $args{'header_separator'} || undef;
+    my $rows             = $args{'rows'}             || ();
+    my $headers          = $args{'headers'}          || ();
+    my $output_format    = $args{'format'}           || 'table';
+    my $widths           = ();
+
+    my @checks = @{$rows};
+
+    push( @checks, $headers ) if ($headers);
+
+    if ( $output_format eq 'table' ) {
+
+        for my $row (@checks) {
+            for ( my $idx = 0; $idx < @{$row}; $idx++ ) {
+
+                if ( defined( $args{'widths'}->[$idx] ) && $args{'widths'}->[$idx] > 0 ) {
+                    $widths->[$idx] = $args{'widths'}->[$idx];
+                    next;
+                }
+
+                my $col = $row->[$idx];
+                $widths->[$idx] = length($col) if ( $col && length($col) > ( $widths->[$idx] || 0 ) );
+
+            }
+        }
+
+    } else {
+
+        for ( my $i = 0; $i < @{ $rows->[0] }; $i++ ) {
+            $widths->[$i] = 1;
+        }
+
+        $header_separator = undef;
+
+        $col_separator = ','  if ( $output_format eq 'csv' );
+        $col_separator = "\t" if ( $output_format eq 'tsv' );
+
+    }
+
+    my $format = join( $col_separator, map {"%-${_}s"} @{$widths} ) . "\n";
+    my $table  = '';
+
+    if ($headers) {
+
+        my $header_row   = sprintf( $format, @{$headers} );
+        my $header_width = length($header_row);
+
+        if ($header_separator) {
+            $table .= sprintf( "%s\n", $header_separator x $header_width );
+        }
+
+        $table .= $header_row;
+
+        if ($header_separator) {
+            $table .= sprintf( "%s\n", $header_separator x $header_width );
+        }
+
+    }
+
+    for my $row ( @{$rows} ) {
+
+        if ( $output_format eq 'table' ) {
+            $table .= sprintf(
+                $format,
+                map {
+                    if   ($_) {$_}
+                    else      {''}
+                } @{$row}
+            );
+        } else {
+            $table .= sprintf( $format, map { trim($_) } @{$row} );
+        }
+
+    }
+
+    return $table;
+
+}
+
+sub cli_error {
     my ($error) = @_;
     $error =~ s/ at .* line \d+.*//;
     print "ERROR: $error\n";
@@ -32,12 +202,17 @@ my @options = (
     'hostname=s',
     'username=s',
     'password=s',
+    'config=s',
 
     'format|f=s',
-    'dumper',
-    'json'
-
+    'json',
+    'table',
+    'csv',
+    'tsv',
+    'yaml',
 );
+
+my @output_formats = qw/json table csv tsv yaml/;
 
 my $options = {};
 my $params  = {};
@@ -53,24 +228,52 @@ $method =~ s/-/_/g if ($method);
 
 pod2usage(1) if ( $options->{'help'} );
 
+if ( $options->{'config'} ) {
+
+    my $config = config_parser( slurp( $options->{'config'} ) );
+
+    if ($config && $config->{'SecurityCenter'}) {
+
+        if ( $config->{'SecurityCenter'}->{'hostname'} ) {
+            $options->{'hostname'} = $config->{'SecurityCenter'}->{'hostname'};
+        }
+
+        if ( $config->{'SecurityCenter'}->{'username'} ) {
+            $options->{'username'} = $config->{'SecurityCenter'}->{'username'};
+        }
+
+        if ( $config->{'SecurityCenter'}->{'password'} ) {
+            $options->{'password'} = $config->{'SecurityCenter'}->{'password'};
+        }
+
+    } else {
+        cli_error('Failed to parse config file');
+    }
+}
+
 pod2usage( -exitstatus => 0, -verbose => 2 ) if ( $options->{'man'} );
 pod2usage( -exitstatus => 0, -verbose => 0 ) if ( !$options->{'hostname'} || !$options->{'username'} );
 
-if ( $options->{'dumper'} ) {
-    $options->{'format'} = 'dumper';
-}
-
-if ( $options->{'json'} ) {
-    $options->{'format'} = 'json';
+if ( $options->{'format'} ) {
+    if ( !grep { $options->{'format'} eq $_ } @output_formats ) {
+        print "ERROR: Unknown output format\n\n";
+        pod2usage( -exitstatus => 0, -verbose => 0 );
+    }
 }
 
 $options->{'format'} ||= 'json';
+
+$options->{'format'} = 'yaml'  if ( $options->{'yaml'} );
+$options->{'format'} = 'table' if ( $options->{'table'} );
+$options->{'format'} = 'json'  if ( $options->{'json'} );
+$options->{'format'} = 'csv'   if ( $options->{'csv'} );
+$options->{'format'} = 'tsv'   if ( $options->{'tsv'} );
 
 pod2usage( -verbose => 0 ) if ( !$api || !$method );
 
 foreach my $arg (@ARGV) {
 
-    if ( $arg =~ m{^([^:]+):(.*)$} ) {
+    if ( $arg =~ m{^([^=]+)=(.*)$} ) {
 
         my ( $key, $value ) = ( $1, $2 );
         $key =~ s{-}{_}g;
@@ -96,18 +299,28 @@ if ( !$options->{'password'} ) {
 my $sc_options = {};
 
 if ( $options->{'verbose'} ) {
+
     $sc_options->{'logger'} = Net::SecurityCenter::LoggerSimple->new;
+
+    {
+        local $Data::Dumper::Indent = 0;
+        local $Data::Dumper::Terse  = 1;
+
+        $sc_options->{'logger'}->debug("INPUT - Call $api -> $method");
+        $sc_options->{'logger'}->debug("INPUT - Params: " . Dumper($params));
+    }
+
 }
 
-my $sc = Net::SecurityCenter->new( $options->{'hostname'}, $sc_options ) or error($@);
+my $sc = Net::SecurityCenter->new( $options->{'hostname'}, $sc_options ) or cli_error($@);
 
 if ( !$sc->can($api) || !$sc->$api->can($method) ) {
-    error("Unknown $api $method command");
+    cli_error("Unknown $api $method command");
 }
 
-$sc->login( $options->{'username'}, $options->{'password'} ) or error( $sc->error );
+$sc->login( $options->{'username'}, $options->{'password'} ) or cli_error( $sc->error );
 
-$results = $sc->$api->$method( %{$params} ) or error( $sc->error );
+$results = $sc->$api->$method( %{$params} ) or cli_error( $sc->error );
 
 if ( ref $results eq 'ARRAY' || ref $results eq 'HASH' ) {
 
@@ -134,6 +347,57 @@ if ( ref $results eq 'ARRAY' || ref $results eq 'HASH' ) {
     if ( $options->{'format'} eq 'dumper' ) {
         print Dumper($results);
         exit(0);
+    }
+
+    if ( $options->{'format'} eq 'yaml' ) {
+
+        if ( eval { require YAML::XS } ) {
+            print YAML::XS::Dump($results);
+            exit(0);
+        }
+        if ( eval { require YAML } ) {
+            print YAML::Dump($results);
+            exit(0);
+        }
+
+        print "ERROR: YAML or YAML::XS module are missing\n";
+        exit(255);
+    }
+
+    if ( $options->{'format'} eq 'tsv' || $options->{'format'} eq 'csv' || $options->{'format'} eq 'table' ) {
+
+        my @rows   = ();
+        my @fields = ();
+
+        if ( ref $results ne 'ARRAY' ) {
+            $results = [$results];
+        }
+
+        foreach my $row ( @{$results} ) {
+            if ( !@fields ) {
+                @fields = sort keys %{$row};
+            }
+            my @row;
+            foreach (@fields) {
+                push @row, $row->{$_};
+            }
+            push @rows, \@row;
+        }
+
+        if (@rows) {
+
+            print table(
+                rows             => \@rows,
+                headers          => \@fields,
+                format           => $options->{'format'},
+                column_separator => '|',
+                header_separator => '-',
+            );
+
+        }
+
+        exit(0);
+
     }
 
 }
@@ -211,10 +475,35 @@ sc-api - Tenable.sc (SecurityCenter) API command line interface
         --hostname          Tenable.sc (SecurityCenter) host/IP address
         --username          Username
         --password          Password
+        
+        --config [FILE]     Configuration file
 
-        --format            Output format (default: json)
-        --json              JSON output format
-        --dumper            Data::Dumper output format
+        --format [TYPE]     Output format (default: json)
+                                - json (require JSON or JSON::XS modules)
+                                - dumper (Data::Dumper)
+                                - csv (Comma Separated Values)
+                                - tsv (Tab Separated Values)
+                                - table
+                                - yaml (require YAML or YAML::XS modules)
+
+        --table             Table output format (--format=table)
+        --csv               CSV output format (--format=csv)
+        --tsv               TSV output format (--format=tsv)
+        --dumper            Data::Dumper format (--format=dumper)
+        --json              JSON output format (--format=json)
+        --yaml              YAML output format (--format=yaml)
+
+    Examples:
+
+        Download a plugin from Tenable.sc:
+
+            sc-api plugin download id=19506
+
+        View Tenable.sc policy:
+
+            sc-api policy get id=1
+
+        
 
 =head1 DESCRIPTION
 
@@ -284,6 +573,25 @@ See L<Net::SecurityCenter::Zone> class.
 
 
 =head1 OPTIONS
+
+=head2 --help
+
+=head2 --man
+
+=head2 --version
+
+=head1 OUTPUT FORMATS
+
+C<sc-api> can export the Tenable.sc API output in different format (B<CSV>, B<TSV>, B<Table>, B<JSON>, B<YAML>, B<Dumper>).
+
+=head1 CONFIGURATION FILE
+
+Sample configuration file:
+
+    [SecurityCenter]
+    hostname = tenable-sc.example.org
+    username = secman
+    password = mypass
 
 =head1 AUTHOR
 
