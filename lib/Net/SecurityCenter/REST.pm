@@ -12,7 +12,7 @@ use LWP::UserAgent;
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.199_10';
+our $VERSION = '0.200';
 
 #-------------------------------------------------------------------------------
 # CONSTRUCTOR
@@ -22,13 +22,13 @@ sub new {
 
     my ( $class, $host, $options ) = @_;
 
-    my $agent      = LWP::UserAgent->new();
-    my $cookie_jar = HTTP::Cookies->new();
-
     if ( !$host ) {
         $@ = 'Specify valid Tenable.sc (SecurityCenter) hostname or IP address';    ## no critic
         return;
     }
+
+    my $agent      = LWP::UserAgent->new();
+    my $cookie_jar = HTTP::Cookies->new();
 
     $agent->agent( _agent() );
     $agent->ssl_opts( verify_hostname => 0 );

@@ -15,7 +15,7 @@ use English qw( -no_match_vars );
 
 use Data::Dumper;
 
-our $VERSION = '0.199_10';
+our $VERSION = '0.200';
 
 sub slurp {
 
@@ -232,7 +232,7 @@ if ( $options->{'config'} ) {
 
     my $config = config_parser( slurp( $options->{'config'} ) );
 
-    if ($config && $config->{'SecurityCenter'}) {
+    if ( $config && $config->{'SecurityCenter'} ) {
 
         if ( $config->{'SecurityCenter'}->{'hostname'} ) {
             $options->{'hostname'} = $config->{'SecurityCenter'}->{'hostname'};
@@ -307,7 +307,7 @@ if ( $options->{'verbose'} ) {
         local $Data::Dumper::Terse  = 1;
 
         $sc_options->{'logger'}->debug("INPUT - Call $api -> $method");
-        $sc_options->{'logger'}->debug("INPUT - Params: " . Dumper($params));
+        $sc_options->{'logger'}->debug( "INPUT - Params: " . Dumper($params) );
     }
 
 }
@@ -378,9 +378,17 @@ if ( ref $results eq 'ARRAY' || ref $results eq 'HASH' ) {
                 @fields = sort keys %{$row};
             }
             my @row;
+
             foreach (@fields) {
-                push @row, $row->{$_};
+
+                if ( ref $row->{$_} eq 'HASH' ) {
+                    push @row, encode_json( $row->{$_} );
+                } else {
+                    push @row, $row->{$_};
+                }
+
             }
+
             push @rows, \@row;
         }
 
