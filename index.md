@@ -24,6 +24,7 @@ Perl interface to *Tenable.sc* (SecurityCenter) REST API
    - [Net::SecurityCenter::API::System](api/Net-SecurityCenter-API-System.md)
    - [Net::SecurityCenter::API::User](api/Net-SecurityCenter-API-User.md)
    - [Net::SecurityCenter::API::Zone](api/Net-SecurityCenter-API-Zone.md)
+ - [Net::SecurityCenter::Error](api/Net-SecurityCenter-Error.md)
  - [Net::SecurityCenter::Utils](api/Net-SecurityCenter-Utils.md)
  - [Net::SecurityCenter::REST](api/Net-SecurityCenter-REST.md)
 
@@ -32,9 +33,14 @@ Perl interface to *Tenable.sc* (SecurityCenter) REST API
 
 ```.pl
     use Net::SecurityCenter;
-    my $sc = Net::SecurityCenter('sc.example.org');
+    my $sc = Net::SecurityCenter('sc.example.org') or die "Error: $@";
 
     $sc->login('secman', 'password');
+
+    if ($sc->error) {
+      print "Failed login: " . $sc->error;
+      exit 0;
+    }
 
     my $running_scans = $sc->scan_result->list_running;
 
