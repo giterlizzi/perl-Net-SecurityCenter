@@ -1,4 +1,4 @@
-# Net::SecurityCenter - Perl interface to Tenable SecurityCenter REST API
+# Net::SecurityCenter - Perl interface to Tenable.sc (SecurityCenter) REST API
 
 The INSTALL is used to introduce the module and provide instructions on
 how to install the module, any machine dependencies it may have (for
@@ -21,6 +21,23 @@ perldoc command.
 
     perldoc Net::SecurityCenter
     perldoc Net::SecurityCenter::REST
+    perldoc Net::SecurityCenter::API
+    perldoc Net::SecurityCenter::API::Analysis
+    perldoc Net::SecurityCenter::API::Credential
+    perldoc Net::SecurityCenter::API::Feed
+    perldoc Net::SecurityCenter::API::File
+    perldoc Net::SecurityCenter::API::Plugin
+    perldoc Net::SecurityCenter::API::PluginFamily
+    perldoc Net::SecurityCenter::API::Policy
+    perldoc Net::SecurityCenter::API::Report
+    perldoc Net::SecurityCenter::API::Repository
+    perldoc Net::SecurityCenter::API::Scan
+    perldoc Net::SecurityCenter::API::ScanResult
+    perldoc Net::SecurityCenter::API::Scanner
+    perldoc Net::SecurityCenter::API::System
+    perldoc Net::SecurityCenter::API::User
+    perldoc Net::SecurityCenter::API::Zone
+    perldoc Net::SecurityCenter::Utils
 
 You can also look for information at:
 
@@ -30,7 +47,7 @@ You can also look for information at:
 
 ## LICENSE AND COPYRIGHT
 
-Copyright (C) 2018 Giuseppe Di Terlizzi
+Copyright (C) 2018-2019 Giuseppe Di Terlizzi
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the the Artistic License (2.0). You may obtain a
