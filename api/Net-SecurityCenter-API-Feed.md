@@ -1,18 +1,18 @@
 # Net::SecurityCenter::API::Feed
 # NAME
 
-Net::SecurityCenter::API::User - Perl interface to Tenable.sc (SecurityCenter) User REST API
+Net::SecurityCenter::API::Feed - Perl interface to Tenable.sc (SecurityCenter) Feed REST API
 
 # SYNOPSIS
 
     use Net::SecurityCenter::REST;
-    use Net::SecurityCenter::API::User;
+    use Net::SecurityCenter::API::Feed;
 
     my $sc = Net::SecurityCenter::REST->new('sc.example.org');
 
     $sc->login('secman', 'password');
 
-    my $api = Net::SecurityCenter::API::User->new($sc);
+    my $api = Net::SecurityCenter::API::Feed->new($sc);
 
     $sc->logout();
 
