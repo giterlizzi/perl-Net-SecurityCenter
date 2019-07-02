@@ -3,7 +3,7 @@ Revision history for Net-SecurityCenter
 0.100 2018/12/28
     - initial release
 
-0.200 2019/05/xx
+0.200 2019/07/02
     - Created new API structure and splitted Net::Security::Center class in
       indipendent API modules:
       - Analisys
