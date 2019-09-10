@@ -113,6 +113,22 @@ Params:
 - `page` : Number of page for pagination
 - `limit` : Number of items (default is `1000`)
 
+## download
+
+Downloads an analysis of a query in CSV format.
+
+**NOTE**: This is a facility for `$sc->get( download => 1, ... )` method
+
+Params:
+
+- `type` : Type of analysis (_required_)
+- `query_id` : ID of query
+- `sort_dir` : Sort direction `ASC` or `DESC`
+- `sort_field` : Sort field
+- `scan_id` : Scan ID (only for `individual` source type and `vuln` type values)
+- `view` : View type (only for `individual` source type and `vuln` type values and `archive` source type and `event` type values)
+- `columns` : Report columns (comma-separated value, eg. `pluginID,name`)
+
 ## get\_log
 
 Processes a query for log analysis.
