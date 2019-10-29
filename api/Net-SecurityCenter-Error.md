@@ -24,7 +24,7 @@ Net::SecurityCenter::Error - Error helper for Net::SecurityCenter
 ## Bugs / Feature Requests
 
 Please report any bugs or feature requests through the issue tracker
-at [https://github.com/LotarProject/perl-Net-SecurityCenter/issues](https://github.com/LotarProject/perl-Net-SecurityCenter/issues).
+at [https://github.com/giterlizzi/perl-Net-SecurityCenter/issues](https://github.com/giterlizzi/perl-Net-SecurityCenter/issues).
 You will be notified automatically of any progress on your issue.
 
 ## Source Code
@@ -32,9 +32,9 @@ You will be notified automatically of any progress on your issue.
 This is open source software.  The code repository is available for
 public review and contribution under the terms of the license.
 
-[https://github.com/LotarProject/perl-Net-SecurityCenter](https://github.com/LotarProject/perl-Net-SecurityCenter)
+[https://github.com/giterlizzi/perl-Net-SecurityCenter](https://github.com/giterlizzi/perl-Net-SecurityCenter)
 
-    git clone https://github.com/LotarProject/perl-Net-SecurityCenter.git
+    git clone https://github.com/giterlizzi/perl-Net-SecurityCenter.git
 
 # AUTHOR
 

@@ -81,21 +81,21 @@ Params:
 - `id` : Scan result ID
 - `fields` : Fields
 
-## get\_progress
+## progress
 
 Get scan progress associated with `id`.
 
-    print 'Scan progress: ' . $sc->get_scan_progress( id => 1337 ) . '%';
+    print 'Scan progress: ' . $sc->progress( id => 1337 ) . '%';
 
 Params:
 
 - `id` : Scan result ID
 
-## get\_status
+## status
 
 Get scan status associated with `id`.
 
-    print 'Scan status: ' . $sc->get_status( id => 1337 );
+    print 'Scan status: ' . $sc->status( id => 1337 );
 
 Params:
 
@@ -142,7 +142,7 @@ Params:
 ## Bugs / Feature Requests
 
 Please report any bugs or feature requests through the issue tracker
-at [https://github.com/LotarProject/perl-Net-SecurityCenter/issues](https://github.com/LotarProject/perl-Net-SecurityCenter/issues).
+at [https://github.com/giterlizzi/perl-Net-SecurityCenter/issues](https://github.com/giterlizzi/perl-Net-SecurityCenter/issues).
 You will be notified automatically of any progress on your issue.
 
 ## Source Code
@@ -150,9 +150,9 @@ You will be notified automatically of any progress on your issue.
 This is open source software.  The code repository is available for
 public review and contribution under the terms of the license.
 
-[https://github.com/LotarProject/perl-Net-SecurityCenter](https://github.com/LotarProject/perl-Net-SecurityCenter)
+[https://github.com/giterlizzi/perl-Net-SecurityCenter](https://github.com/giterlizzi/perl-Net-SecurityCenter)
 
-    git clone https://github.com/LotarProject/perl-Net-SecurityCenter.git
+    git clone https://github.com/giterlizzi/perl-Net-SecurityCenter.git
 
 # AUTHOR
 
