@@ -1,5 +1,8 @@
 Revision history for Net::SecurityCenter
 
+0.204 2019/11/06
+    - Removed "List::Util" dependency (fix Bug #130874)
+
 0.203 2019/10/29
     - Added initial support for Tenable.sc 5.12
     - Added "Net::SecurityCenter::API::Scanner::health" method
