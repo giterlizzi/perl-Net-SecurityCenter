@@ -125,6 +125,30 @@ Params:
 
 - `id` : Scan result ID
 
+## import
+
+Imports the Scan Result associated with the uploaded file, identified by `filename`.
+
+    $sc->import( filename => '/tmp/report.nessus', repository => 1 );
+
+Params:
+
+- `filename` : Nessus report filename (_required_)
+- `repository` : Repository ID (_required_)
+- `scan_vhost` : Scan VirtualHost
+- `classify_mitigated_age` : Classify Mitigated Age
+- `dhcp_tracking`  DHCP Tracking
+
+## reimport
+
+Re-imports the Scan Result associated with `id`.
+
+    $sc->reimport( id => 1337 );
+
+Params:
+
+- `id` : Scan result ID
+
 ## stop
 
 Stop a scan associated with `id`.
@@ -136,6 +160,18 @@ Stop a scan associated with `id`.
 Params:
 
 - `id` : Scan result ID
+- `type` : Stop type (values: `import`)
+
+## email
+
+Emails the Scan Result associated with `id`.
+
+    $sc->email( id => 1337, email => 'john@example.org' );
+
+Params:
+
+- `id` : Scan result ID
+- `email` : Email address
 
 # SUPPORT
 
