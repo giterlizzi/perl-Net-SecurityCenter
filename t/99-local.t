@@ -118,6 +118,16 @@ sub _test {
     ok( $sc->login( 'secman', 'password' ), 'Login into SecurityCenter' );
 
     subtest(
+        'Status API' => sub {
+
+            my $system_info = $sc->status->status;
+
+            ok( $system_info->{'licenseStatus'}, 'SecurityCenter license' );
+
+        }
+    );
+
+    subtest(
         'System API' => sub {
 
             my $system_info = $sc->system->get_info;
@@ -144,6 +154,51 @@ sub _test {
         }
     );
 
+    subtest(
+        'Scan Result API' => sub {
+
+            ok( $sc->scan_result->list, 'Scan Result API: Get the list of scans' );
+
+            ok( $sc->scan_result->get( id => 11 ), 'Scan Result API: Get Scan Result' );
+
+            cmp_ok( $sc->scan_result->status( id => 11 ),   'eq', 'completed', 'Get Scan Result status' );
+            cmp_ok( $sc->scan_result->progress( id => 11 ), '==', 100,         'Get Scan Result progress' );
+
+            ok( $sc->scan_result->pause( id => 86 ),  'Scan Result API: Pause scan' );
+            ok( $sc->scan_result->resume( id => 86 ), 'Scan Result API: Resume scan' );
+            ok( $sc->scan_result->stop( id => 86 ),   'Scan Result API: Stop scan' );
+        }
+    );
+
+    subtest(
+        'Plugin API' => sub {
+
+            my $plugin = $sc->plugin->get( id => 0 );
+
+            ok( $plugin, 'Plugin API: Get Plugin' );
+            cmp_ok( $plugin->{'id'},   '==', 0,           'Get Plugin ID' );
+            cmp_ok( $plugin->{'name'}, 'eq', 'Open Port', 'Get Plugin Name' );
+
+            ok( $sc->plugin->list, 'Plugin API: Get Plugin List' );
+
+        }
+    );
+
+    subtest(
+        'Plugin Famiy API' => sub {
+
+            my $plugin_family = $sc->plugin_family->get( id => 1000030 );
+
+            ok( $plugin_family, 'Plugin Family API: Get Plugin Family' );
+            cmp_ok( $plugin_family->{'id'},   '==', 1000030,   'Get Plugin Family ID' );
+            cmp_ok( $plugin_family->{'name'}, 'eq', 'Malware', 'Get Plugin Family Name' );
+            cmp_ok( $plugin_family->{'type'}, 'eq', 'passive', 'Get Plugin Family Type' );
+
+            ok( $sc->plugin_family->list, 'Plugin Family API: Get Plugin List' );
+
+        }
+    );
+
     ok( $sc->logout, 'Logout from SecurityCenter' );
 
     done_testing();
@@ -163,22 +218,22 @@ sub new {
 
 sub info {
     my $self = shift;
-    Test::More::note(@_);
+    Test::More::note( '[info] ', @_ );
 }
 
 sub debug {
     my $self = shift;
-    Test::More::note(@_);
+    Test::More::note( '[debug] ', @_ );
 }
 
 sub warning {
     my $self = shift;
-    Test::More::note(@_);
+    Test::More::note( '[warning] ', @_ );
 }
 
 sub error {
     my $self = shift;
-    Test::More::note(@_);
+    Test::More::note( '[error] ', @_ );
 }
 
 1;

@@ -5,25 +5,25 @@
 ## Synopsis
 
 ```.pl
-    use Net::SecurityCenter;
-    my $sc = Net::SecurityCenter('sc.example.org') or die "Error: $@";
+use Net::SecurityCenter;
+my $sc = Net::SecurityCenter('sc.example.org') or die "Error: $@";
 
-    $sc->login('secman', 'password');
+$sc->login('secman', 'password');
 
-    if ($sc->error) {
-      print "Failed login: " . $sc->error;
-      exit 0;
-    }
+if ($sc->error) {
+  print "Failed login: " . $sc->error;
+  exit 0;
+}
 
-    my $running_scans = $sc->scan_result->list_running;
+my $running_scans = $sc->scan_result->list_running;
 
-    if ($sc->scan_result->status( id => 1337 ) eq 'completed') {
-        $sc->scan_result->download( id       => 1337,
-                                    filename => '/tmp/1337.nessus' );
+if ($sc->scan_result->status( id => 1337 ) eq 'completed') {
+    $sc->scan_result->download( id       => 1337,
+                                filename => '/tmp/1337.nessus' );
 
-    }
+}
 
-    $sc->logout();
+$sc->logout();
 ```
 
 ## Install
@@ -37,5 +37,5 @@ To install `Net::SecurityCenter` distribution, run the following commands:
 
 ## Copyright
 
- - Copyright 2018-2019 © Giuseppe Di Terlizzi
+ - Copyright 2018-2020 © Giuseppe Di Terlizzi
  - Nessus®, Tenable.sc® and SecurityCenter® is a Registered Trademark of Tenable®, Inc.

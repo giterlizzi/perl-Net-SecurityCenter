@@ -11,7 +11,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.205';
+our $VERSION = '0.205_01';
 
 my $common_template = {
 
@@ -275,15 +275,15 @@ sub import {
     };
 
     my $tmpl = {
-        filename => {},
+        filename      => {},
         dhcp_tracking => {
             remap  => 'dhcpTracking',
             filter => \&sc_filter_int_to_bool,
             allow  => qr/\d/,
         },
         classify_mitigated_age => { remap => 'classifyMitigatedAge' },
-        scan_vhost => {
-            remap => 'scanningVirtualHosts',
+        scan_vhost             => {
+            remap  => 'scanningVirtualHosts',
             filter => \&sc_filter_int_to_bool,
             allow  => qr/\d/,
         },
@@ -300,7 +300,7 @@ sub import {
 
     $params->{'filename'} = $sc_filename;
 
-    $self->client->post("/scanResult/import", $params);
+    $self->client->post( "/scanResult/import", $params );
     return 1;
 
 }
@@ -635,7 +635,7 @@ L<https://github.com/giterlizzi/perl-Net-SecurityCenter>
 
 =head1 LICENSE AND COPYRIGHT
 
-This software is copyright (c) 2018-2019 by Giuseppe Di Terlizzi.
+This software is copyright (c) 2018-2020 by Giuseppe Di Terlizzi.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

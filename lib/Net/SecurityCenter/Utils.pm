@@ -6,9 +6,10 @@ use strict;
 use Carp;
 use Params::Check qw(allow);
 use Time::Piece;
+use Data::Dumper ();
 use Exporter qw(import);
 
-our $VERSION = '0.205';
+our $VERSION = '0.205_01';
 
 our @EXPORT_OK = qw(
     sc_check_params
@@ -20,6 +21,10 @@ our @EXPORT_OK = qw(
     sc_normalize_array
     sc_method_usage
     sc_schedule
+
+    decamelize
+    dumper
+    trim
 );
 
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
@@ -50,14 +55,40 @@ our $NESSUS_SCANNER_STATUS = {
 };
 
 #-------------------------------------------------------------------------------
-# FUNCTIONS
+# COMMON UTILS
+#-------------------------------------------------------------------------------
+
+sub decamelize {
+    return join( '_', map {lc} grep {length} split /([A-Z]{1}[^A-Z]*)/, shift );
+}
+
+#-------------------------------------------------------------------------------
+
+sub dumper {
+    return Data::Dumper->new( [@_] )->Indent(1)->Sortkeys(1)->Terse(1)->Useqq(1)->Dump;
+}
+
+#-------------------------------------------------------------------------------
+
+sub trim {
+
+    my ($string) = @_;
+
+    return if ( !$string );
+
+    $string =~ s/^\s+|\s+$//g;
+    return $string;
+
+}
+
+#-------------------------------------------------------------------------------
+# COMMON CLASS UTILS
 #-------------------------------------------------------------------------------
 
 sub sc_schedule {
 
     my (%args) = @_;
-    use Data::Dumper;
-    print Dumper( \%args );
+
     my $tmpl = {
         type => {
             allow    => [ 'dependent', 'ical', 'never', 'rollover', 'template', 'now' ],
@@ -94,6 +125,8 @@ sub sc_schedule {
     return $params;
 
 }
+
+#-------------------------------------------------------------------------------
 
 sub sc_method_usage {
 
@@ -437,7 +470,7 @@ L<https://github.com/giterlizzi/perl-Net-SecurityCenter>
 
 =head1 LICENSE AND COPYRIGHT
 
-This software is copyright (c) 2018-2019 by Giuseppe Di Terlizzi.
+This software is copyright (c) 2018-2020 by Giuseppe Di Terlizzi.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

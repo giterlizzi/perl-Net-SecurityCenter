@@ -7,7 +7,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.205';
+our $VERSION = '0.205_01';
 
 #-------------------------------------------------------------------------------
 # METHODS
@@ -17,22 +17,11 @@ sub get_status {
 
     my ( $self, %args ) = @_;
 
-    my $tmpl = {
-        fields => {
-            filter => \&sc_filter_array_to_string
-        },
-        raw => {},
-    };
+    warnings::warnif( 'deprecated',
+        'method "Net::SecurityCenter::API::System->get_status" is deprecated use "Net::SecurityCenter::API::Status->status"'
+    );
 
-    my $params = sc_check_params( $tmpl, \%args );
-    my $raw    = delete( $params->{'raw'} );
-    my $status = $self->client->get( '/status', $params );
-
-    if ($raw) {
-        return $status;
-    }
-
-    return sc_normalize_hash($status);
+    return;
 
 }
 
@@ -178,7 +167,7 @@ Create a new instance of B<Net::SecurityCenter::API::System> using L<Net::Securi
 
 =head2 get_status
 
-Gets a collection of status information, including license.
+DEPRECATED use L<Net::SecurityCenter::API::Status>->status method.
 
 =head2 get_info
 
@@ -230,7 +219,7 @@ L<https://github.com/giterlizzi/perl-Net-SecurityCenter>
 
 =head1 LICENSE AND COPYRIGHT
 
-This software is copyright (c) 2018-2019 by Giuseppe Di Terlizzi.
+This software is copyright (c) 2018-2020 by Giuseppe Di Terlizzi.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

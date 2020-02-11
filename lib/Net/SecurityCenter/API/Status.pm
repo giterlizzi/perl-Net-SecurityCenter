@@ -1,9 +1,7 @@
-package Net::SecurityCenter::API::File;
+package Net::SecurityCenter::API::Status;
 
 use warnings;
 use strict;
-
-use Carp;
 
 use parent 'Net::SecurityCenter::API';
 
@@ -15,31 +13,26 @@ our $VERSION = '0.205_01';
 # METHODS
 #-------------------------------------------------------------------------------
 
-sub upload {
+sub status {
 
-    my ( $self, $file ) = @_;
+    my ( $self, %args ) = @_;
 
-    ( @_ == 2 ) or croak( 'Usage: ' . __PACKAGE__ . '->upload( $FILE )' );
+    my $tmpl = {
+        fields => {
+            filter => \&sc_filter_array_to_string
+        },
+        raw => {},
+    };
 
-    my $response = $self->client->upload($file);
+    my $params = sc_check_params( $tmpl, \%args );
+    my $raw    = delete( $params->{'raw'} );
+    my $status = $self->client->get( '/status', $params );
 
-    return if ( !$response );
-    return $response->{filename};
+    if ($raw) {
+        return $status;
+    }
 
-}
-
-#-------------------------------------------------------------------------------
-
-sub clear {
-
-    my ( $self, $file ) = @_;
-
-    ( @_ == 2 ) or croak( 'Usage: ' . __PACKAGE__ . '->clear( $FILE )' );
-
-    my $response = $self->client->post( '/file/clear', { filename => $file } );
-
-    return if ( !$response );
-    return 1;
+    return sc_normalize_hash($status);
 
 }
 
@@ -55,26 +48,26 @@ __END__
 
 =head1 NAME
 
-Net::SecurityCenter::API::File - Perl interface to Tenable.sc (SecurityCenter) File REST API
+Net::SecurityCenter::API::System - Perl interface to Tenable.sc (SecurityCenter) System REST API
 
 
 =head1 SYNOPSIS
 
     use Net::SecurityCenter::REST;
-    use Net::SecurityCenter::API::File;
+    use Net::SecurityCenter::API::System;
 
     my $sc = Net::SecurityCenter::REST->new('sc.example.org');
 
     $sc->login('secman', 'password');
 
-    my $api = Net::SecurityCenter::API::File->new($sc);
+    my $api = Net::SecurityCenter::API::Status->new($sc);
 
     $sc->logout();
 
 
 =head1 DESCRIPTION
 
-This module provides Perl scripts easy way to interface the File REST API of Tenable.sc
+This module provides Perl scripts easy way to interface the System REST API of Tenable.sc
 (SecurityCenter).
 
 For more information about the Tenable.sc (SecurityCenter) REST API follow the online documentation:
@@ -84,24 +77,16 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::File->new ( $client )
+=head2 Net::SecurityCenter::API::Status->new ( $client )
 
-Create a new instance of B<Net::SecurityCenter::API::File> using L<Net::SecurityCenter::REST> class.
+Create a new instance of B<Net::SecurityCenter::API::Status> using L<Net::SecurityCenter::REST> class.
 
 
 =head1 METHODS
 
-=head2 upload
+=head2 status
 
-Uploads a File.
-
-    $sc->file->upload('/tmp/all-2.0.tar.gz');
-
-=head2 clear
-
-Removes the File associated with C<filename>.
-
-    $sc->file->clear('4fk1r0');
+Gets a collection of status information, including license.
 
 
 =head1 SUPPORT
