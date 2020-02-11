@@ -117,6 +117,8 @@ sub _test {
 
     ok( $sc->login( 'secman', 'password' ), 'Login into SecurityCenter' );
 
+    is( $sc->error, undef, 'Check errors' );
+
     subtest(
         'Status API' => sub {
 
@@ -139,14 +141,14 @@ sub _test {
         }
     );
 
-    ok( $sc->scan->list, 'Scan API: Get list of Active Scan' );
-
     subtest(
         'Scan API' => sub {
 
+            ok( $sc->scan->list, 'Get list of Active Scan' );
+
             my $scan = $sc->scan->get( id => 4 );
 
-            ok( $scan, 'Scan API: Get Active Scan' );
+            ok( $scan, 'Get Active Scan' );
             cmp_ok( $scan->{'id'},                '==', 4,       'Get Scan ID' );
             cmp_ok( $scan->{'policy'}->{'id'},    '==', 1000002, 'Get Scan Policy ID' );
             cmp_ok( $sc->scan->launch( id => 2 ), '==', 3,       'Launch Scan ID' );
@@ -157,16 +159,16 @@ sub _test {
     subtest(
         'Scan Result API' => sub {
 
-            ok( $sc->scan_result->list, 'Scan Result API: Get the list of scans' );
+            ok( $sc->scan_result->list, 'Get the list of scans' );
 
-            ok( $sc->scan_result->get( id => 11 ), 'Scan Result API: Get Scan Result' );
+            ok( $sc->scan_result->get( id => 11 ), 'Get Scan Result' );
 
             cmp_ok( $sc->scan_result->status( id => 11 ),   'eq', 'completed', 'Get Scan Result status' );
             cmp_ok( $sc->scan_result->progress( id => 11 ), '==', 100,         'Get Scan Result progress' );
 
-            ok( $sc->scan_result->pause( id => 86 ),  'Scan Result API: Pause scan' );
-            ok( $sc->scan_result->resume( id => 86 ), 'Scan Result API: Resume scan' );
-            ok( $sc->scan_result->stop( id => 86 ),   'Scan Result API: Stop scan' );
+            ok( $sc->scan_result->pause( id => 86 ),  'Pause scan' );
+            ok( $sc->scan_result->resume( id => 86 ), 'Resume scan' );
+            ok( $sc->scan_result->stop( id => 86 ),   'Stop scan' );
         }
     );
 
@@ -175,26 +177,59 @@ sub _test {
 
             my $plugin = $sc->plugin->get( id => 0 );
 
-            ok( $plugin, 'Plugin API: Get Plugin' );
+            ok( $plugin, 'Get Plugin' );
             cmp_ok( $plugin->{'id'},   '==', 0,           'Get Plugin ID' );
             cmp_ok( $plugin->{'name'}, 'eq', 'Open Port', 'Get Plugin Name' );
 
-            ok( $sc->plugin->list, 'Plugin API: Get Plugin List' );
+            ok( $sc->plugin->list, 'Get Plugin List' );
 
         }
     );
 
     subtest(
-        'Plugin Famiy API' => sub {
+        'Plugin Family API' => sub {
 
             my $plugin_family = $sc->plugin_family->get( id => 1000030 );
 
-            ok( $plugin_family, 'Plugin Family API: Get Plugin Family' );
+            ok( $plugin_family, 'Get Plugin Family' );
             cmp_ok( $plugin_family->{'id'},   '==', 1000030,   'Get Plugin Family ID' );
             cmp_ok( $plugin_family->{'name'}, 'eq', 'Malware', 'Get Plugin Family Name' );
             cmp_ok( $plugin_family->{'type'}, 'eq', 'passive', 'Get Plugin Family Type' );
 
-            ok( $sc->plugin_family->list, 'Plugin Family API: Get Plugin List' );
+            ok( $sc->plugin_family->list,                    'Get List' );
+            ok( $sc->plugin_family->list_plugins( id => 2 ), 'Get Plugins List' );
+
+        }
+    );
+
+    subtest(
+        'Scanner API' => sub {
+
+            ok( $sc->scanner->list,              'Get List' );
+            ok( $sc->scanner->get( id => 5 ),    'Get Scanner' );
+            ok( $sc->scanner->health( id => 5 ), 'Get Scanner Health' );
+            cmp_ok( $sc->scanner->status( id => 5 ), 'eq', 'Updating Status', 'Get scanner status' );
+        }
+    );
+
+    subtest(
+        'Zone API' => sub {
+
+            ok( $sc->zone->list,           'Get list of Scan Zone' );
+            ok( $sc->zone->get( id => 5 ), 'Get Scan Zone detail' );
+
+        }
+    );
+
+    subtest(
+        'Utils' => sub {
+
+            use Net::SecurityCenter::Utils;
+
+            foreach my $id ( sort { $a <=> $b } keys %{$Net::SecurityCenter::Utils::NESSUS_SCANNER_STATUS} ) {
+                my $name = $Net::SecurityCenter::Utils::NESSUS_SCANNER_STATUS->{$id};
+                cmp_ok( Net::SecurityCenter::Utils::sc_decode_scanner_status($id), 'eq', $name, "$id - $name" );
+            }
 
         }
     );
