@@ -138,6 +138,8 @@ sub _test {
             ok( $system_info->{'buildID'},       'SecurityCenter build' );
             ok( $system_info->{'licenseStatus'}, 'SecurityCenter license' );
 
+            ok( $sc->system->get_diagnostics_info, 'Get diagnostics info' );
+
         }
     );
 
@@ -222,14 +224,19 @@ sub _test {
     );
 
     subtest(
-        'Utils' => sub {
+        'Repository API' => sub {
 
-            use Net::SecurityCenter::Utils;
+            ok( $sc->repository->list,            'Get list of Repository' );
+            ok( $sc->repository->get( id => 37 ), 'Get Repository detail' );
 
-            foreach my $id ( sort { $a <=> $b } keys %{$Net::SecurityCenter::Utils::NESSUS_SCANNER_STATUS} ) {
-                my $name = $Net::SecurityCenter::Utils::NESSUS_SCANNER_STATUS->{$id};
-                cmp_ok( Net::SecurityCenter::Utils::sc_decode_scanner_status($id), 'eq', $name, "$id - $name" );
-            }
+        }
+    );
+
+    subtest(
+        'Report API' => sub {
+
+            ok( $sc->report->list,           'Get list of Report' );
+            ok( $sc->report->get( id => 1 ), 'Get Report detail' );
 
         }
     );
