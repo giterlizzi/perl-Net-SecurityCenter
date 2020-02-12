@@ -5,6 +5,7 @@ use warnings;
 use Test::More;
 
 use HTTP::Daemon;
+
 use Net::SecurityCenter;
 
 $| = 1;    # autoflush
@@ -32,7 +33,8 @@ sub dispatch {
         $c->send_file("t/mock/$mock.json");
 
     } else {
-        $c->send_404();
+        $c->send_basic_header(404);
+        $c->print("Content-Type: application/json");
     }
 
 }
