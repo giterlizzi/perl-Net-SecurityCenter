@@ -134,13 +134,17 @@ sub _test {
     subtest(
         'System API' => sub {
 
-            my $system_info = $sc->system->get_info;
+            my $system_info = $sc->system->info;
 
             ok( $system_info->{'version'},       'SecurityCenter version' );
             ok( $system_info->{'buildID'},       'SecurityCenter build' );
             ok( $system_info->{'licenseStatus'}, 'SecurityCenter license' );
 
             ok( $sc->system->get_diagnostics_info, 'Get diagnostics info' );
+
+            ok( $sc->system->debug, 'Get debug info' );
+            ok( $sc->system->debug( id       => 60 ),       'Get debug info (id=60)' );
+            ok( $sc->system->debug( category => 'common' ), 'Get debug info (category=common)' );
 
         }
     );

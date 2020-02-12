@@ -21,13 +21,23 @@ sub get_status {
         'method "Net::SecurityCenter::API::System->get_status" is deprecated use "Net::SecurityCenter::API::Status->status"'
     );
 
-    return;
+}
+
+sub get_info {
+
+    my ( $self, %args ) = @_;
+
+    warnings::warnif( 'deprecated',
+        'method "Net::SecurityCenter::API::Status->get_info" is deprecated use "Net::SecurityCenter::API::Status->info"'
+    );
+
+    return $self->info( \%args );
 
 }
 
 #-------------------------------------------------------------------------------
 
-sub get_info {
+sub info {
 
     my ( $self, %args ) = @_;
 
@@ -46,6 +56,57 @@ sub get_info {
     }
 
     return sc_normalize_hash($info);
+
+}
+
+#-------------------------------------------------------------------------------
+
+sub debug {
+
+    my ( $self, %args ) = @_;
+
+    my $tmpl = { name => {}, id => {}, category => {} };
+
+    my $params   = sc_check_params( $tmpl, \%args );
+    my $id       = delete( $params->{'id'} );
+    my $name     = delete( $params->{'name'} );
+    my $category = delete( $params->{'category'} );
+    my $debug    = $self->client->get('/system/debug');
+
+    if ( !$debug ) {
+        return;
+    }
+
+    my $id_results       = {};
+    my $name_results     = {};
+    my $category_results = {};
+
+    foreach my $item ( @{$debug} ) {
+
+        $id_results->{ $item->{id} }     = $item;
+        $name_results->{ $item->{name} } = $item;
+
+        if ( !defined( $category_results->{ $item->{category} } ) ) {
+            $category_results->{ $item->{category} } = ();
+        }
+
+        push @{ $category_results->{ $item->{category} } }, $item;
+
+    }
+
+    if ($name) {
+        return $name_results->{$name};
+    }
+
+    if ($id) {
+        return $id_results->{$id};
+    }
+
+    if ($category) {
+        return $category_results->{$category};
+    }
+
+    return $debug;
 
 }
 
@@ -169,9 +230,35 @@ Create a new instance of B<Net::SecurityCenter::API::System> using L<Net::Securi
 
 DEPRECATED use L<Net::SecurityCenter::API::Status>->status method.
 
-=head2 get_info
+=head2 info
+=head2 get_info (DEPRECATED)
 
 Gets the system initialization information.
+
+=head2 debug
+
+    # Get all Tenble.sc debug informations
+    my @debug = $sc->debug;
+
+    # Check scan debug flag
+    if ($sc->debug( id => 60 )->{enabled} eq 'true' ) {
+        say "Scan Debug enabled!";
+    }
+
+    # Get all "common" debug category
+    my @common = $sc->debug( category => 'common' );
+
+Params:
+
+=over 4
+
+=item * C<id> : ID of debug item
+
+=item * C<name> : Name of category
+
+=item * C<category> : Debug category
+
+=back
 
 =head2 get_diagnostics_info
 
