@@ -1,9 +1,7 @@
-package Net::SecurityCenter::API::Zone;
+package Net::SecurityCenter::API::Status;
 
 use warnings;
 use strict;
-
-use Carp;
 
 use parent 'Net::SecurityCenter::API';
 
@@ -11,71 +9,34 @@ use Net::SecurityCenter::Utils qw(:all);
 
 our $VERSION = '0.206';
 
-my $common_template = {
-
-    id => {
-        required => 1,
-        allow    => qr/^\d+$/,
-        messages => {
-            required => 'Scan Zone ID is required',
-            allow    => 'Invalid Scan Zone ID',
-        },
-    },
-
-    fields => {
-        filter => \&sc_filter_array_to_string
-    }
-
-};
-
 #-------------------------------------------------------------------------------
 # METHODS
 #-------------------------------------------------------------------------------
 
-sub list {
+sub status {
 
     my ( $self, %args ) = @_;
 
     my $tmpl = {
-        fields => $common_template->{'fields'},
-        raw    => {},
+        fields => {
+            filter => \&sc_filter_array_to_string
+        },
+        raw => {},
     };
 
     my $params = sc_check_params( $tmpl, \%args );
-    my $zones  = $self->client->get( '/zone', $params );
+    my $raw    = delete( $params->{'raw'} );
+    my $status = $self->client->get( '/status', $params );
 
-    return if ( !$zones );
+    if ($raw) {
+        return $status;
+    }
 
-    my $raw = delete( $params->{'raw'} );
-
-    return $zones if ($raw);
-
-    return sc_normalize_array($zones);
+    return sc_normalize_hash($status);
 
 }
 
 #-------------------------------------------------------------------------------
-
-sub get {
-
-    my ( $self, %args ) = @_;
-
-    my $tmpl = {
-        fields => $common_template->{'fields'},
-        id     => $common_template->{'id'},
-        raw    => {},
-    };
-
-    my $params  = sc_check_params( $tmpl, \%args );
-    my $zone_id = delete( $params->{'id'} );
-    my $raw     = delete( $params->{'raw'} );
-    my $zone    = $self->client->get( "/zone/$zone_id", $params );
-
-    return       if ( !$zone );
-    return $zone if ($raw);
-    return sc_normalize_hash($zone);
-
-}
 
 1;
 
@@ -87,26 +48,26 @@ __END__
 
 =head1 NAME
 
-Net::SecurityCenter::API::Zone - Perl interface to Tenable.sc (SecurityCenter) Zone REST API
+Net::SecurityCenter::API::System - Perl interface to Tenable.sc (SecurityCenter) Status REST API
 
 
 =head1 SYNOPSIS
 
     use Net::SecurityCenter::REST;
-    use Net::SecurityCenter::API::Zone;
+    use Net::SecurityCenter::API::System;
 
     my $sc = Net::SecurityCenter::REST->new('sc.example.org');
 
     $sc->login('secman', 'password');
 
-    my $api = Net::SecurityCenter::API::Zone->new($sc);
+    my $api = Net::SecurityCenter::API::Status->new($sc);
 
     $sc->logout();
 
 
 =head1 DESCRIPTION
 
-This module provides Perl scripts easy way to interface the Zone REST API of Tenable.sc
+This module provides Perl scripts easy way to interface the System REST API of Tenable.sc
 (SecurityCenter).
 
 For more information about the Tenable.sc (SecurityCenter) REST API follow the online documentation:
@@ -116,20 +77,16 @@ L<https://docs.tenable.com/sccv/api/index.html>
 
 =head1 CONSTRUCTOR
 
-=head2 Net::SecurityCenter::API::Zone->new ( $client )
+=head2 Net::SecurityCenter::API::Status->new ( $client )
 
-Create a new instance of B<Net::SecurityCenter::API::Zone> using L<Net::SecurityCenter::REST> class.
+Create a new instance of B<Net::SecurityCenter::API::Status> using L<Net::SecurityCenter::REST> class.
 
 
 =head1 METHODS
 
-=head2 list
+=head2 status
 
-Get the scan zone list.
-
-=head2 get
-
-Get the scan zone associated with C<zone_id>.
+Gets a collection of status information, including license.
 
 
 =head1 SUPPORT
