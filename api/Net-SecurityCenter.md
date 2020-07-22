@@ -28,14 +28,14 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 ## Net::SecurityCenter->new ( host \[, $params \] )
 
-Create a new instance of **Net::Security::Center** using [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class.
+Create a new instance of **Net::Security::Center** using [Net::SecurityCenter::REST](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AREST) class.
 
 Params:
 
 - `timeout` : Request timeout in seconds (default is `180` seconds).
 If a socket open, read or write takes longer than the timeout, an exception is thrown.
-- `ssl_options` : A hashref of `SSL_*` options to pass through to [IO::Socket::SSL](https://metacpan.org/pod/IO::Socket::SSL).
-- `logger` : A logger instance (eg. [Log::Log4perl](https://metacpan.org/pod/Log::Log4perl) or [Log::Any](https://metacpan.org/pod/Log::Any) for log
+- `ssl_options` : A hashref of `SSL_*` options to pass through to [IO::Socket::SSL](https://metacpan.org/pod/IO%3A%3ASocket%3A%3ASSL).
+- `logger` : A logger instance (eg. [Log::Log4perl](https://metacpan.org/pod/Log%3A%3ALog4perl) or [Log::Any](https://metacpan.org/pod/Log%3A%3AAny) for log
 the REST request and response messages.
 - `no_check` : Disable the check of SecurityCenter instance.
 
@@ -43,7 +43,7 @@ the REST request and response messages.
 
 ## $sc->client ()
 
-Return the instance of [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class
+Return the instance of [Net::SecurityCenter::REST](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AREST) class
 
 ## $sc->login ( $username, $password )
 
@@ -57,63 +57,67 @@ Logout from SecurityCenter.
 
 ## analysis
 
-Return [Net::SecurityCenter::API::Analysis](Net-SecurityCenter-API-Analysis.md) instance.
+Return [Net::SecurityCenter::API::Analysis](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3AAnalysis) instance.
 
 ## credential
 
-Return [Net::SecurityCenter::API::Credential](Net-SecurityCenter-API-Credential.md) instance.
+Return [Net::SecurityCenter::API::Credential](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3ACredential) instance.
 
 ## feed
 
-Return [Net::SecurityCenter::API::Feed](Net-SecurityCenter-API-Feed.md) instance.
+Return [Net::SecurityCenter::API::Feed](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3AFeed) instance.
 
 ## file
 
-Return [Net::SecurityCenter::API::File](Net-SecurityCenter-API-File.md) instance.
+Return [Net::SecurityCenter::API::File](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3AFile) instance.
 
 ## plugin
 
-Return [Net::SecurityCenter::API::Plugin](Net-SecurityCenter-API-Plugin.md) instance.
+Return [Net::SecurityCenter::API::Plugin](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3APlugin) instance.
 
 ## plugin\_family
 
-Return [Net::SecurityCenter::API::PluginFamily](Net-SecurityCenter-API-PluginFamily.md) instance.
+Return [Net::SecurityCenter::API::PluginFamily](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3APluginFamily) instance.
 
 ## policy
 
-Return [Net::SecurityCenter::API::Policy](Net-SecurityCenter-API-Policy.md) instance.
+Return [Net::SecurityCenter::API::Policy](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3APolicy) instance.
 
 ## report
 
-Return [Net::SecurityCenter::API::Report](Net-SecurityCenter-API-Report.md) instance.
+Return [Net::SecurityCenter::API::Report](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3AReport) instance.
 
 ## repository
 
-Return [Net::SecurityCenter::API::Repository](Net-SecurityCenter-API-Repository.md) instance.
+Return [Net::SecurityCenter::API::Repository](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3ARepository) instance.
 
 ## scan
 
-Return [Net::SecurityCenter::API::Scan](Net-SecurityCenter-API-Scan.md) instance.
+Return [Net::SecurityCenter::API::Scan](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3AScan) instance.
 
 ## scan\_result
 
-Return [Net::SecurityCenter::API::ScanResult](Net-SecurityCenter-API-ScanResult.md) instance.
+Return [Net::SecurityCenter::API::ScanResult](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3AScanResult) instance.
 
 ## scanner
 
-Return [Net::SecurityCenter::API::Scanner](Net-SecurityCenter-API-Scanner.md) instance.
+Return [Net::SecurityCenter::API::Scanner](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3AScanner) instance.
+
+## status
+
+Return [Net::SecurityCenter::API::Status](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3AStatus) instance.
 
 ## system
 
-Return [Net::SecurityCenter::API::System](Net-SecurityCenter-API-System.md) instance.
+Return [Net::SecurityCenter::API::System](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3ASystem) instance.
 
 ## user
 
-Return [Net::SecurityCenter::API::User](Net-SecurityCenter-API-User.md) instance.
+Return [Net::SecurityCenter::API::User](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3AUser) instance.
 
 ## zone
 
-Return [Net::SecurityCenter::API::Zone](Net-SecurityCenter-API-Zone.md) instance.
+Return [Net::SecurityCenter::API::Zone](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3AZone) instance.
 
 # SUPPORT
 
@@ -138,7 +142,7 @@ public review and contribution under the terms of the license.
 
 # LICENSE AND COPYRIGHT
 
-This software is copyright (c) 2018-2019 by Giuseppe Di Terlizzi.
+This software is copyright (c) 2018-2020 by Giuseppe Di Terlizzi.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

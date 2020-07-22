@@ -28,14 +28,14 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 ## Net::SecurityCenter::REST->new ( host \[, $params \] )
 
-Create a new instance of [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md).
+Create a new instance of [Net::SecurityCenter::REST](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AREST).
 
 Params:
 
 - `timeout` : Request timeout in seconds (default is 180) If a socket open,
 read or write takes longer than the timeout, an exception is thrown.
-- `ssl_options` : A hashref of `SSL_*` options to pass through to [IO::Socket::SSL](https://metacpan.org/pod/IO::Socket::SSL).
-- `logger` : A logger instance (eg. [Log::Log4perl](https://metacpan.org/pod/Log::Log4perl) or [Log::Any](https://metacpan.org/pod/Log::Any) for log
+- `ssl_options` : A hashref of `SSL_*` options to pass through to [IO::Socket::SSL](https://metacpan.org/pod/IO%3A%3ASocket%3A%3ASSL).
+- `logger` : A logger instance (eg. [Log::Log4perl](https://metacpan.org/pod/Log%3A%3ALog4perl) or [Log::Any](https://metacpan.org/pod/Log%3A%3AAny) for log
 the REST request and response messages.
 - `no_check` : Disable the check of SecurityCenter installation.
 
@@ -88,7 +88,7 @@ public review and contribution under the terms of the license.
 
 # LICENSE AND COPYRIGHT
 
-This software is copyright (c) 2018-2019 by Giuseppe Di Terlizzi.
+This software is copyright (c) 2018-2020 by Giuseppe Di Terlizzi.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

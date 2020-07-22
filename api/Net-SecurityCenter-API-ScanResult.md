@@ -29,7 +29,7 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 ## Net::SecurityCenter::API::ScanResult->new ( $client )
 
-Create a new instance of **Net::SecurityCenter::API::ScanResult** using [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class.
+Create a new instance of **Net::SecurityCenter::API::ScanResult** using [Net::SecurityCenter::REST](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AREST) class.
 
 # METHODS
 
@@ -51,10 +51,70 @@ Params:
 
 Get list of scans results (completed, running, etc.).
 
+    my $scans = $sc->list(
+        start_date => '2020-01-01',
+        end_date => '2020-02-01',
+        fields => 'id,name,description,startTime,finishTime',
+    );
+
+
+    # Using Time::Piece
+
+    use Time::Piece;
+    use Time::Seconds;
+
+    my $t = Time::Piece->new;
+    $t -= ONE_DAY; # Yesterday
+
+    my $scans = $sc->list(
+        start_date => $t,
+    );
+
 Params:
 
 - `fields` : List of fields
+- `start_date` : Start date of scan in ISO 8601 format (YYYY-MM-DD, YYYY-MM-DD HH:MM:SS or YYYY-MM-DDTHH:MM:SS) or [Time::Piece](https://metacpan.org/pod/Time%3A%3APiece) object
+- `end_date` : End date of scan (see `start_date`)
+- `start_time` : Start date in epoch
+- `end_date` : End date in epoch 
 - `filter` : Filter (`usable`, `manageable`, `running` or `completed`)
+
+Allowed Fields:
+
+- `id` \*
+- `name` \*\*
+- `description` \*\*
+- `status` \*\*
+- `initiator`
+- `owner`
+- `ownerGroup`
+- `repository`
+- `scan`
+- `job`
+- `details`
+- `importStatus`
+- `importStart`
+- `importFinish`
+- `importDuration`
+- `downloadAvailable`
+- `downloadFormat`
+- `dataFormat`
+- `resultType`
+- `resultSource`
+- `running`
+- `errorDetails`
+- `importErrorDetails`
+- `totalIPs`
+- `scannedIPs`
+- `startTime`
+- `finishTime`
+- `scanDuration`
+- `completedIPs`
+- `completedChecks`
+- `totalChecks`
+
+(\*) always comes back
+(\*\*) comes back if fields list not specified
 
 ## list\_running
 
@@ -79,7 +139,7 @@ Gets the scan information associated with `id`.
 Params:
 
 - `id` : Scan result ID
-- `fields` : Fields
+- `fields` : Fields (see `list`)
 
 ## progress
 
@@ -196,7 +256,7 @@ public review and contribution under the terms of the license.
 
 # LICENSE AND COPYRIGHT
 
-This software is copyright (c) 2018-2019 by Giuseppe Di Terlizzi.
+This software is copyright (c) 2018-2020 by Giuseppe Di Terlizzi.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

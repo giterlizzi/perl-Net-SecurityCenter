@@ -1,24 +1,24 @@
-# Net::SecurityCenter::API::Repository
+# Net::SecurityCenter::API::DeviceInfo
 # NAME
 
-Net::SecurityCenter::API::Repository - Perl interface to Tenable.sc (SecurityCenter) Repository REST API
+Net::SecurityCenter::API::DeviceInfo - Perl interface to Tenable.sc (SecurityCenter) Device Information REST API
 
 # SYNOPSIS
 
     use Net::SecurityCenter::REST;
-    use Net::SecurityCenter::API::Repository;
+    use Net::SecurityCenter::API::DeviceInfo;
 
     my $sc = Net::SecurityCenter::REST->new('sc.example.org');
 
     $sc->login('secman', 'password');
 
-    my $api = Net::SecurityCenter::API::Repository->new($sc);
+    my $api = Net::SecurityCenter::API::DeviceInfo->new($sc);
 
     $sc->logout();
 
 # DESCRIPTION
 
-This module provides Perl scripts easy way to interface the Repository REST API of Tenable.sc
+This module provides Perl scripts easy way to interface the Device Information REST API of Tenable.sc
 (SecurityCenter).
 
 For more information about the Tenable.sc (SecurityCenter) REST API follow the online documentation:
@@ -27,37 +27,26 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 # CONSTRUCTOR
 
-## Net::SecurityCenter::API::Repository->new ( $client )
+## Net::SecurityCenter::API::DeviceInfo->new ( $client )
 
-Create a new instance of **Net::SecurityCenter::API::Repository** using [Net::SecurityCenter::REST](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AREST) class.
+Create a new instance of **Net::SecurityCenter::API::DeviceInfo** using [Net::SecurityCenter::REST](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AREST) class.
 
 # METHODS
 
-## list
+## get\_info
 
-Get the list of repositories.
+Gets the device information from the current user.
 
-Params:
+**NOTE**: This will return device information for the first repository. To specify a particular repository, see
+[Net::SecurityCenter::API::Repository](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3ARepository)::get\_device\_info.
 
-- `type` : Repository type ('all', 'local', 'remote', 'offline')
-- `fields` : List of fields
-
-## get
-
-Get the repository associated with `id`.
-
-Params:
-
-- `id` : Repository ID
-- `fields` : List of fields
-
-## get\_device\_info
-
-Gets the device information for the Repository associated with `id`
+    my $scans = $sc->get_info(
+        ip => '192.168.8.2',
+        fields => 'os,dnsName,severityCritical,severityHigh'
+    );
 
 Params:
 
-- `id` : Repository ID
 - `uuid` : Device UUID
 - `ip` : IP Address
 - `dns_name` : DNS Name
@@ -96,11 +85,6 @@ Allowed Fields:
 - `links`
 
 (\*) always comes back
-
-## get\_ip\_info
-
-**NOTE**: This method has been DEPRECATED as of SecurityCenter 5.7.0
-(see `get_device_info` method or [Net::SecurityCenter::API::DeviceInfo](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3ADeviceInfo)).
 
 # SUPPORT
 

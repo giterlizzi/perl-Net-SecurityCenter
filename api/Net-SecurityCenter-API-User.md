@@ -29,7 +29,7 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 ## Net::SecurityCenter::API::User->new ( $client )
 
-Create a new instance of **Net::SecurityCenter::API::User** using [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class.
+Create a new instance of **Net::SecurityCenter::API::User** using [Net::SecurityCenter::REST](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AREST) class.
 
 # METHODS
 
@@ -68,7 +68,7 @@ public review and contribution under the terms of the license.
 
 # LICENSE AND COPYRIGHT
 
-This software is copyright (c) 2018-2019 by Giuseppe Di Terlizzi.
+This software is copyright (c) 2018-2020 by Giuseppe Di Terlizzi.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

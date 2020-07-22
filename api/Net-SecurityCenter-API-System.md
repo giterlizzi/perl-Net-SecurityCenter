@@ -29,17 +29,37 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 ## Net::SecurityCenter::API::System->new ( $client )
 
-Create a new instance of **Net::SecurityCenter::API::System** using [Net::SecurityCenter::REST](Net-SecurityCenter-REST.md) class.
+Create a new instance of **Net::SecurityCenter::API::System** using [Net::SecurityCenter::REST](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AREST) class.
 
 # METHODS
 
 ## get\_status
 
-Gets a collection of status information, including license.
+DEPRECATED use [Net::SecurityCenter::API::Status](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3AStatus)->status method.
 
-## get\_info
+## info
+=head2 get\_info (DEPRECATED)
 
 Gets the system initialization information.
+
+## debug
+
+    # Get all Tenble.sc debug informations
+    my @debug = $sc->debug;
+
+    # Check scan debug flag
+    if ($sc->debug( id => 60 )->{enabled} eq 'true' ) {
+        say "Scan Debug enabled!";
+    }
+
+    # Get all "common" debug category
+    my @common = $sc->debug( category => 'common' );
+
+Params:
+
+- `id` : ID of debug item
+- `name` : Name of category
+- `category` : Debug category
 
 ## get\_diagnostics\_info
 
@@ -80,7 +100,7 @@ public review and contribution under the terms of the license.
 
 # LICENSE AND COPYRIGHT
 
-This software is copyright (c) 2018-2019 by Giuseppe Di Terlizzi.
+This software is copyright (c) 2018-2020 by Giuseppe Di Terlizzi.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
