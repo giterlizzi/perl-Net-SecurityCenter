@@ -8,9 +8,9 @@ use Net::SecurityCenter::Utils qw(decamelize);
 use Net::SecurityCenter::REST;
 use Net::SecurityCenter::Error;
 
-our $VERSION = '0.205_01';
+our $VERSION = '0.206';
 
-my @apis = qw/Analysis Credential Feed File Plugin PluginFamily Policy Report
+my @apis = qw/Analysis Credential DeviceInfo Feed File Plugin PluginFamily Policy Report
     Repository Scan ScanResult Scanner Status System User Zone/;
 
 #-------------------------------------------------------------------------------

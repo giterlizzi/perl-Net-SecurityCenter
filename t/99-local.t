@@ -122,6 +122,14 @@ sub _test {
     is( $sc->error, undef, 'Check errors' );
 
     subtest(
+        'REST' => sub {
+            my $client = $sc->client;
+            ok( $client->request( 'get', '/system' ), 'Request GET' );
+            ok( $client->get('/system'),              'Request GET (helper)' );
+        }
+    );
+
+    subtest(
         'Status API' => sub {
 
             my $system_info = $sc->status->status;
@@ -206,6 +214,16 @@ sub _test {
 
             ok( $sc->plugin_family->list,                    'Get List' );
             ok( $sc->plugin_family->list_plugins( id => 2 ), 'Get Plugins List' );
+
+        }
+    );
+
+    subtest(
+        'Policy API' => sub {
+
+            ok( $sc->policy->list, 'Get List' );
+
+            ok( $sc->policy->get( id => 1, raw => 1 ), 'Get Policy ID=1' );    #TODO REMOVE RAW
 
         }
     );

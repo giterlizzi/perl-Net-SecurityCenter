@@ -5,7 +5,7 @@ use strict;
 
 use Net::SecurityCenter::Error;
 
-our $VERSION = '0.205_01';
+our $VERSION = '0.206';
 
 #-------------------------------------------------------------------------------
 # CONSTRUCTOR

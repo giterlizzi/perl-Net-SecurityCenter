@@ -15,7 +15,7 @@ use JSON;
 use Carp;
 use English qw( -no_match_vars );
 
-our $VERSION = '0.205_01';
+our $VERSION = '0.206';
 
 sub slurp {
 
@@ -38,8 +38,8 @@ sub config_parse_line {
 
     my ($value) = @_;
 
-    return 1 if ( $value =~ /^(yes|true)$/s );
-    return 0 if ( $value =~ /^(no|false)$/s );
+    return 1 if ( $value =~ m/^(yes|true)$/s );
+    return 0 if ( $value =~ m/^(no|false)$/s );
 
     if ( $value =~ /\,/ ) {
         return map { trim($_) } split /,/, $value;
@@ -61,15 +61,15 @@ sub config_parser {
         chomp($line);
 
         # skip comments and empty lines
-        next if ( $line =~ /^\s*(#|;)/ );
-        next if ( $line =~ /^\s*$/ );
+        next if ( $line =~ m/^\s*([#;])/ );
+        next if ( $line =~ m/^\s*$/ );
 
-        if ( $line =~ /^\[(.*)\]\s*$/ ) {
+        if ( $line =~ m/^\[(.*)\]\s*$/ ) {
             $section = trim($1);
             next;
         }
 
-        if ( $line =~ /^([^=]+?)\s*=\s*(.*?)\s*$/ ) {
+        if ( $line =~ m/^([^=]+?)\s*=\s*(.*?)\s*$/ ) {
 
             my ( $field, $raw_value ) = ( $1, $2 );
             my $parsed_value = [ config_parse_line($raw_value) ];
@@ -195,6 +195,7 @@ my @options = (
     'tsv',
     'yaml',
     'dumper'
+
 );
 
 my @output_formats = qw/json table csv tsv yaml dumper/;
@@ -204,12 +205,6 @@ my $params  = {};
 my $results = {};
 
 GetOptions( $options, @options ) or pod2usage( -verbose => 0 );
-
-my $api    = $ARGV[0] || undef;
-my $method = $ARGV[1] || undef;
-
-$api    =~ s/-/_/g if ($api);
-$method =~ s/-/_/g if ($method);
 
 pod2usage(1) if ( $options->{'help'} );
 
@@ -221,7 +216,7 @@ if ( $options->{'version'} ) {
     require LWP::UserAgent;
     my $lwp_useragent = ($LWP::UserAgent::VERSION) ? $LWP::UserAgent::VERSION : 'n/a';
 
-    print <<'EOF';
+    print "
 sc-api v$VERSION
 
 CORE
@@ -230,8 +225,10 @@ CORE
   LWP::UserAgent      ($lwp_useragent)
   IO::Socket::SSL     ($io_socket_ssl)
 
-EOF
+";
+
     exit(0);
+
 }
 
 if ( $options->{'config'} ) {
@@ -269,12 +266,15 @@ if ( $options->{'format'} ) {
 
 $options->{'format'} ||= 'json';
 
-$options->{'format'} = 'yaml'   if ( $options->{'yaml'} );
-$options->{'format'} = 'table'  if ( $options->{'table'} );
-$options->{'format'} = 'json'   if ( $options->{'json'} );
-$options->{'format'} = 'csv'    if ( $options->{'csv'} );
-$options->{'format'} = 'tsv'    if ( $options->{'tsv'} );
-$options->{'format'} = 'dumper' if ( $options->{'dumper'} );
+foreach (@output_formats) {
+    $options->{'format'} = $_ if ( $options->{$_} );
+}
+
+my $api    = $ARGV[0] || undef;
+my $method = $ARGV[1] || undef;
+
+$api    =~ s/-/_/g if ($api);
+$method =~ s/-/_/g if ($method);
 
 pod2usage( -verbose => 0 ) if ( !$api || !$method );
 
@@ -459,6 +459,7 @@ sc-api - Tenable.sc (SecurityCenter) API command line interface
 
         analysis
         credential
+        device_info
         feed
         file
         plugin
@@ -523,6 +524,10 @@ See L<Net::SecurityCenter::API::Analysis> class.
 =head2 credential
 
 See L<Net::SecurityCenter::API::Analysis> class.
+
+=head2 device_info
+
+See L<Net::SecurityCenter::API::DeviceInfo> class.
 
 =head2 feed
 

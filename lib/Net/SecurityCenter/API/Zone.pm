@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.205_01';
+our $VERSION = '0.206';
 
 my $common_template = {
 
@@ -71,7 +71,7 @@ sub get {
     my $raw     = delete( $params->{'raw'} );
     my $zone    = $self->client->get( "/zone/$zone_id", $params );
 
-    return if ( !$zone );
+    return       if ( !$zone );
     return $zone if ($raw);
     return sc_normalize_hash($zone);
 

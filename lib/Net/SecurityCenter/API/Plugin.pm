@@ -12,7 +12,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.205_01';
+our $VERSION = '0.206';
 
 my $common_template = {
 
@@ -118,7 +118,7 @@ sub list {
     my $raw     = delete( $params->{'raw'} );
     my $plugins = $self->client->get( '/plugin', $params );
 
-    return if ( !$plugins );
+    return          if ( !$plugins );
     return $plugins if ($raw);
 
     return sc_normalize_array($plugins);
@@ -142,7 +142,7 @@ sub get {
     my $plugin_id = delete( $params->{'id'} );
     my $plugin    = $self->client->get( "/plugin/$plugin_id", $params );
 
-    return if ( !$plugin );
+    return         if ( !$plugin );
     return $plugin if ($raw);
 
     return sc_normalize_hash($plugin);

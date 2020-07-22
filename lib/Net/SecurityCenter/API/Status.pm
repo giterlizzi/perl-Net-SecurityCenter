@@ -7,7 +7,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.205_01';
+our $VERSION = '0.206';
 
 #-------------------------------------------------------------------------------
 # METHODS
@@ -48,7 +48,7 @@ __END__
 
 =head1 NAME
 
-Net::SecurityCenter::API::System - Perl interface to Tenable.sc (SecurityCenter) System REST API
+Net::SecurityCenter::API::System - Perl interface to Tenable.sc (SecurityCenter) Status REST API
 
 
 =head1 SYNOPSIS

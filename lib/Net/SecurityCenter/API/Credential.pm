@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.205_01';
+our $VERSION = '0.206';
 
 my $common_template = {
 
@@ -50,7 +50,7 @@ sub list {
     my $credentials = $self->client->get( '/credential', $params );
     my $raw         = delete( $params->{'raw'} );
 
-    return if ( !$credentials );
+    return              if ( !$credentials );
     return $credentials if ($raw);
     return sc_merge($credentials);
 

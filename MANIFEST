@@ -5,6 +5,7 @@ lib/Net/SecurityCenter.pm
 lib/Net/SecurityCenter/API.pm
 lib/Net/SecurityCenter/API/Analysis.pm
 lib/Net/SecurityCenter/API/Credential.pm
+lib/Net/SecurityCenter/API/DeviceInfo.pm
 lib/Net/SecurityCenter/API/Feed.pm
 lib/Net/SecurityCenter/API/File.pm
 lib/Net/SecurityCenter/API/Plugin.pm
@@ -36,6 +37,8 @@ t/mock/rest-plugin-get.json
 t/mock/rest-pluginFamily-1000030-get.json
 t/mock/rest-pluginFamily-2-plugins-get.json
 t/mock/rest-pluginFamily-get.json
+t/mock/rest-policy-1-get.json
+t/mock/rest-policy-get.json
 t/mock/rest-report-1-get.json
 t/mock/rest-report-get.json
 t/mock/rest-repository-37-get.json

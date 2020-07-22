@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.205_01';
+our $VERSION = '0.206';
 
 #-------------------------------------------------------------------------------
 # METHODS
@@ -39,7 +39,7 @@ sub status {
 
     my $feed = $self->client->get($feed_path);
 
-    return if ( !$feed );
+    return       if ( !$feed );
     return $feed if ($raw);
     return sc_normalize_hash($feed);
 

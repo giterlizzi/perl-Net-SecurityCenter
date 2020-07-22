@@ -7,7 +7,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.205_01';
+our $VERSION = '0.206';
 
 #-------------------------------------------------------------------------------
 # METHODS
@@ -17,19 +17,19 @@ sub get_status {
 
     my ( $self, %args ) = @_;
 
-    warnings::warnif( 'deprecated',
-        'method "Net::SecurityCenter::API::System->get_status" is deprecated use "Net::SecurityCenter::API::Status->status"'
-    );
+    deprecated
+        '"Net::SecurityCenter::API::System->get_status" is DEPRECATED use "Net::SecurityCenter::API::Status->status" instead';
 
 }
+
+#-------------------------------------------------------------------------------
 
 sub get_info {
 
     my ( $self, %args ) = @_;
 
-    warnings::warnif( 'deprecated',
-        'method "Net::SecurityCenter::API::Status->get_info" is deprecated use "Net::SecurityCenter::API::Status->info"'
-    );
+    deprecated
+        '"Net::SecurityCenter::API::Status->get_info" is DEPRECATED use "Net::SecurityCenter::API::Status->info"';
 
     return $self->info( \%args );
 

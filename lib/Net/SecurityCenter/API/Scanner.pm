@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.205_01';
+our $VERSION = '0.206';
 
 my $common_template = {
 
@@ -74,7 +74,7 @@ sub get {
     my $raw        = delete( $params->{'raw'} );
     my $scanner    = $self->client->get( "/scanner/$scanner_id", $params );
 
-    return if ( !$scanner );
+    return          if ( !$scanner );
     return $scanner if ($raw);
     return sc_normalize_hash($scanner);
 

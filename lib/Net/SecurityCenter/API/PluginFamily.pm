@@ -9,7 +9,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.205_01';
+our $VERSION = '0.206';
 
 my $common_template = {
 
@@ -133,7 +133,7 @@ sub list_plugins {
     my $plugin_family_id = delete( $params->{'id'} );
     my $plugins          = $self->client->get( "/pluginFamily/$plugin_family_id/plugins", $params );
 
-    return if ( !$plugins );
+    return          if ( !$plugins );
     return $plugins if ($raw);
     return sc_normalize_array($plugins);
 

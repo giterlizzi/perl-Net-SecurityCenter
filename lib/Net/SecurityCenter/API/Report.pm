@@ -10,7 +10,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.205_01';
+our $VERSION = '0.206';
 
 my $common_template = {
 
@@ -51,7 +51,7 @@ sub list {
     my $raw     = delete( $params->{'raw'} );
     my $reports = $self->client->get( '/report', $params );
 
-    return if ( !$reports );
+    return          if ( !$reports );
     return $reports if ($raw);
     return sc_merge($reports);
 
@@ -76,7 +76,7 @@ sub get {
 
     my $report = $self->client->get( "/report/$report_id", $params );
 
-    return if ( !$report );
+    return         if ( !$report );
     return $report if ($raw);
     return sc_normalize_hash($report);
 
@@ -162,20 +162,49 @@ Create a new instance of B<Net::SecurityCenter::API::Report> using L<Net::Securi
 
 =head1 METHODS
 
-=head2 list ( [ $fields ] )
+=head2 list
 
 Gets the list of reports.
 
-=head2 get ( $report_id [, $fields ])
+Params:
 
-Gets the report associated with C<report_id>.
+=over 4
 
-=head2 download ( $report_id [, $filename ] )
+=item * C<fields> : Report fields
 
-Download the report associated with C<report_id>.
+=item * C<filter> : Filter
 
-    $report->download(1337, '/tmp/report.pdf');
+=item * C<raw> : Return RAW result
 
+=back
+
+=head2 get
+
+Gets the report associated with C<id>.
+
+Params:
+
+=over 4
+
+=item * C<id> : Report ID
+
+=back
+
+=head2 download
+
+Download the report associated with C<id>.
+
+    $report->download( id => 1337, filename => '/tmp/report.pdf');
+
+Params:
+
+=over 4
+
+=item * C<id> : Report ID
+
+=item * C<filename> : Name of file
+
+=back
 
 =head1 SUPPORT
 

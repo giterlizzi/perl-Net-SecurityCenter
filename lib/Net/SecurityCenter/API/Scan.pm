@@ -10,7 +10,7 @@ use parent 'Net::SecurityCenter::API';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.205_01';
+our $VERSION = '0.206';
 
 my $common_template = {
 
@@ -234,7 +234,7 @@ sub list {
     my $raw    = delete( $params->{'raw'} );
     my $scans  = $self->client->get( '/scan', $params );
 
-    return if ( !$scans );
+    return        if ( !$scans );
     return $scans if ($raw);
     return sc_merge($scans);
 }
@@ -255,7 +255,7 @@ sub get {
     my $raw     = delete( $params->{'raw'} );
     my $scan    = $self->client->get( "/scan/$scan_id", $params );
 
-    return if ( !$scan );
+    return       if ( !$scan );
     return $scan if ($scan);
     return sc_normalize_hash($scan);
 
