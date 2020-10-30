@@ -1,11 +1,9 @@
-package Net::SecurityCenter::API;
+package Net::SecurityCenter::Base;
 
 use warnings;
 use strict;
 
-use Net::SecurityCenter::Error;
-
-our $VERSION = '0.206';
+our $VERSION = '0.300';
 
 #-------------------------------------------------------------------------------
 # CONSTRUCTOR
@@ -15,10 +13,7 @@ sub new {
 
     my ( $class, $client ) = @_;
 
-    my $self = {
-        client => $client,
-        _error => undef,
-    };
+    my $self = { client => $client, };
 
     return bless $self, $class;
 
@@ -40,10 +35,10 @@ sub error {
     my ( $self, $message, $code ) = @_;
 
     if ( defined $message ) {
-        $self->{'client'}->{'_error'} = Net::SecurityCenter::Error->new( $message, $code );
+        $self->{client}->error( $message, $code );
         return;
     } else {
-        return $self->{'client'}->{'_error'};
+        return $self->{client}->error;
     }
 
 }
@@ -60,7 +55,7 @@ __END__
 
 =head1 NAME
 
-Net::SecurityCenter::API - API Base Class for Net::Security::Center
+Net::SecurityCenter::Base - API Base Class for Net::Security::Center
 
 
 =head1 SYNOPSIS
@@ -69,9 +64,11 @@ Net::SecurityCenter::API - API Base Class for Net::Security::Center
 
     my $sc = Net::SecurityCenter('sc.example.org');
 
-    $sc->login('secman', 'password');
+    if (! $sc->login('secman', 'password')) {
+        die $sc->error;
+    }
 
-    $scan->logout();
+    $sc->logout();
 
 
 =head1 DESCRIPTION
