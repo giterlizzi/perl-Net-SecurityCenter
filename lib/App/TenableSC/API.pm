@@ -10,6 +10,9 @@ use parent 'App::TenableSC';
 
 use App::TenableSC::Utils qw(:all);
 
+our $VERSION = '0.300';
+
+
 @App::TenableSC::command_options = (
     'output|format|f=s',
 
