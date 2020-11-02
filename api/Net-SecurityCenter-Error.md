@@ -7,17 +7,61 @@ Net::SecurityCenter::Error - Error helper for Net::SecurityCenter
 
     use Net::SecurityCenter;
 
-    my $sc = Net::SecurityCenter('sc.example.org') or die "Error : " . $@;
+    my $sc = Net::SecurityCenter('sc.example.org');
 
-    $sc->login('secman', 'password');
+    $sc->login('secman', 'password') or die $sc->error;
 
     if ($sc->error) {
         die $sc->error;
     }
 
+    my $res = $sc->scan_result->list;
+
+    if (my $error = $sc->error) {
+        die $error;
+    }
+
     $sc->logout();
 
 # DESCRIPTION
+
+# CONSTRUCTOR
+
+## Net::SecurityCenter::Error->new ( $message \[, $code \] )
+
+Create a new instance of [Net::SecurityCenter::Error](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AError).
+
+# METHODS
+
+## $error->message
+
+Return the error message.
+
+## $error->code
+
+Return the error code.
+
+# ERROR HANDLING
+
+Detect undef result:
+
+    $sc->get('/scanResult') or die $sc->error;
+
+    # or
+
+    my $res = $sc->get('/scanResult/1337');
+
+    if (! $res) {
+        die $sc->error;
+    }
+
+Use error object:
+
+    my $res = $sc->get('/scanResult/1337');
+
+    if (my $error = $sc->error) {
+        die $error;
+    }
 
 # SUPPORT
 

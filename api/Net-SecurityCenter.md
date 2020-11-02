@@ -9,7 +9,9 @@ Net::SecurityCenter - Perl interface to Tenable.sc (SecurityCenter) REST API
 
     my $sc = Net::SecurityCenter('sc.example.org');
 
-    $sc->login('secman', 'password');
+    if (! $sc->login(username => 'secman', password => 's3cr3t')) {
+        die $sc->error;
+    }
 
     my $running_scans = $sc->scan_result->list_running;
 
@@ -32,12 +34,12 @@ Create a new instance of **Net::Security::Center** using [Net::SecurityCenter::R
 
 Params:
 
-- `timeout` : Request timeout in seconds (default is `180` seconds).
-If a socket open, read or write takes longer than the timeout, an exception is thrown.
+- `timeout` : Request timeout in seconds (default is 180) If a socket open,
+read or write takes longer than the timeout, an exception is thrown.
 - `ssl_options` : A hashref of `SSL_*` options to pass through to [IO::Socket::SSL](https://metacpan.org/pod/IO%3A%3ASocket%3A%3ASSL).
-- `logger` : A logger instance (eg. [Log::Log4perl](https://metacpan.org/pod/Log%3A%3ALog4perl) or [Log::Any](https://metacpan.org/pod/Log%3A%3AAny) for log
-the REST request and response messages.
-- `no_check` : Disable the check of SecurityCenter instance.
+- `logger` : A logger instance (eg. [Log::Log4perl](https://metacpan.org/pod/Log%3A%3ALog4perl), [Log::Any](https://metacpan.org/pod/Log%3A%3AAny) or [Mojo::Log](https://metacpan.org/pod/Mojo%3A%3ALog))
+for log the REST request and response messages.
+- `scheme` : URI scheme (default: HTTPS).
 
 # COMMON METHODS
 
@@ -45,9 +47,11 @@ the REST request and response messages.
 
 Return the instance of [Net::SecurityCenter::REST](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AREST) class
 
-## $sc->login ( $username, $password )
+## $sc->login ( ... )
 
 Login into SecurityCenter.
+
+See "Username and password authetication" and "API Key authentication" in [Net::SecurityCenter::REST](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AREST).
 
 ## $sc->logout
 
@@ -70,6 +74,10 @@ Return [Net::SecurityCenter::API::Feed](https://metacpan.org/pod/Net%3A%3ASecuri
 ## file
 
 Return [Net::SecurityCenter::API::File](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3AFile) instance.
+
+## notification
+
+Return [Net::SecurityCenter::API::Notification](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AAPI%3A%3ANotification) instance.
 
 ## plugin
 

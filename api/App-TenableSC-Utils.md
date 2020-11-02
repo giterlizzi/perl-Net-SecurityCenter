@@ -1,41 +1,24 @@
-# Net::SecurityCenter::API::Status
+# App::TenableSC::Utils
 # NAME
 
-Net::SecurityCenter::API::Status - Perl interface to Tenable.sc (SecurityCenter) Status REST API
+App::TenableSC::Utils - Utilities for App::TenableSC
 
 # SYNOPSIS
 
-    use Net::SecurityCenter::REST;
-    use Net::SecurityCenter::API::Status;
+    use App::TenableSC::Utils qw(:all);
 
-    my $sc = Net::SecurityCenter::REST->new('sc.example.org');
-
-    $sc->login('secman', 'password');
-
-    my $api = Net::SecurityCenter::API::Status->new($sc);
-
-    $sc->logout();
+    print dumper( { 'foo' => 'bar' } );
 
 # DESCRIPTION
 
-This module provides Perl scripts easy way to interface the Status REST API of Tenable.sc
+This module provides Perl scripts easy way to interface the REST API of Tenable.sc
 (SecurityCenter).
 
 For more information about the Tenable.sc (SecurityCenter) REST API follow the online documentation:
 
 [https://docs.tenable.com/sccv/api/index.html](https://docs.tenable.com/sccv/api/index.html)
 
-# CONSTRUCTOR
-
-## Net::SecurityCenter::API::Status->new ( $client )
-
-Create a new instance of **Net::SecurityCenter::API::Status** using [Net::SecurityCenter::REST](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AREST) class.
-
 # METHODS
-
-## status
-
-Gets a collection of status information, including license.
 
 # SUPPORT
 

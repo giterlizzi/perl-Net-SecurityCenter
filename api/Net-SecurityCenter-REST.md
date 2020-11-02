@@ -9,7 +9,9 @@ Net::SecurityCenter::REST - Perl interface to Tenable.sc (SecurityCenter) REST A
 
     my $sc = Net::SecurityCenter::REST('sc.example.org');
 
-    $sc->login('secman', 'password');
+    if (! $sc->login('secman', 'password')) {
+        die $sc->error;
+    }
 
     my $running_scans = $sc->get('/scanResult', { filter => 'running' });
 
@@ -35,15 +37,15 @@ Params:
 - `timeout` : Request timeout in seconds (default is 180) If a socket open,
 read or write takes longer than the timeout, an exception is thrown.
 - `ssl_options` : A hashref of `SSL_*` options to pass through to [IO::Socket::SSL](https://metacpan.org/pod/IO%3A%3ASocket%3A%3ASSL).
-- `logger` : A logger instance (eg. [Log::Log4perl](https://metacpan.org/pod/Log%3A%3ALog4perl) or [Log::Any](https://metacpan.org/pod/Log%3A%3AAny) for log
-the REST request and response messages.
-- `no_check` : Disable the check of SecurityCenter installation.
+- `logger` : A logger instance (eg. [Log::Log4perl](https://metacpan.org/pod/Log%3A%3ALog4perl), [Log::Any](https://metacpan.org/pod/Log%3A%3AAny) or [Mojo::Log](https://metacpan.org/pod/Mojo%3A%3ALog))
+for log the REST request and response messages.
+- `scheme` : URI scheme (default: HTTPS).
 
 # METHODS
 
 ## $sc->post|get|put|delete|patch ( $path \[, \\%params \] )
 
-Execute a request to SecurityCenter REST API. These methods are shorthand for
+Execute a request to Tenable.sc REST API. These methods are shorthand for
 calling `request()` for the given method.
 
     my $nessus_scan = $sc->post('/scanResult/1337/download',  { 'downloadType' => 'v2' });
@@ -51,19 +53,40 @@ calling `request()` for the given method.
 ## $sc->request ( $method, $path \[, \\%params \] )
 
 Execute a HTTP request of the given method type ('GET', 'POST', 'PUT', 'DELETE',
-''PATCH') to SecurityCenter REST API.
+''PATCH') to Tenable.sc REST API.
 
-## $sc->login ( $username, $password )
+## $sc->login ( ... )
 
-Login into SecurityCenter.
+Login into Tenable.sc using username/password or API Key.
+
+### Username and password authentication
+
+    $sc->login( $username, $password ):
+    $sc->login( username => ..., password => ... );
+
+### API Key authentication
+
+Since Tenable.SC 5.13 it's possibile to use API Key authentication using `access_key`
+and `secret_key`:
+
+    $sc->login( access_key => ..., secret_key => ... );
+
+More information about API Key authentication:
+
+- Enable API Key Authentication - [https://docs.tenable.com/tenablesc/Content/EnableAPIKeys.htm](https://docs.tenable.com/tenablesc/Content/EnableAPIKeys.htm)
+- Generate API Keys - [https://docs.tenable.com/tenablesc/Content/GenerateAPIKey.htm](https://docs.tenable.com/tenablesc/Content/GenerateAPIKey.htm)
 
 ## $sc->logout
 
-Logout from SecurityCenter.
+Logout from Tenable.sc.
 
 ## $sc->upload ( $file )
 
-Upload a file into SecurityCenter.
+Upload a file into Tenable.sc.
+
+## $sc->error
+
+Catch the Tenable.sc errors and return [Net::SecurityCenter::Error](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AError) class.
 
 # SUPPORT
 

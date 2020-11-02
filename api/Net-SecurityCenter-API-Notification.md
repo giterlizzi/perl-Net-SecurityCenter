@@ -1,24 +1,24 @@
-# Net::SecurityCenter::API::Status
+# Net::SecurityCenter::API::Notification
 # NAME
 
-Net::SecurityCenter::API::Status - Perl interface to Tenable.sc (SecurityCenter) Status REST API
+Net::SecurityCenter::API::Notification - Perl interface to Tenable.sc (SecurityCenter) Status REST API
 
 # SYNOPSIS
 
     use Net::SecurityCenter::REST;
-    use Net::SecurityCenter::API::Status;
+    use Net::SecurityCenter::API::Notification;
 
     my $sc = Net::SecurityCenter::REST->new('sc.example.org');
 
     $sc->login('secman', 'password');
 
-    my $api = Net::SecurityCenter::API::Status->new($sc);
+    my $api = Net::SecurityCenter::API::Notification->new($sc);
 
     $sc->logout();
 
 # DESCRIPTION
 
-This module provides Perl scripts easy way to interface the Status REST API of Tenable.sc
+This module provides Perl scripts easy way to interface the Notification REST API of Tenable.sc
 (SecurityCenter).
 
 For more information about the Tenable.sc (SecurityCenter) REST API follow the online documentation:
@@ -27,15 +27,45 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 
 # CONSTRUCTOR
 
-## Net::SecurityCenter::API::Status->new ( $client )
+## Net::SecurityCenter::API::Notification->new ( $client )
 
-Create a new instance of **Net::SecurityCenter::API::Status** using [Net::SecurityCenter::REST](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AREST) class.
+Create a new instance of **Net::SecurityCenter::API::Notification** using [Net::SecurityCenter::REST](https://metacpan.org/pod/Net%3A%3ASecurityCenter%3A%3AREST) class.
 
 # METHODS
 
-## status
+## list
 
-Gets a collection of status information, including license.
+Gets the list of notifications.
+
+Params:
+
+- `fields` : List of fields (see `list`)
+- `raw` : Return the original message without optimizations
+
+Allowed Fields:
+
+- `id` \*
+- `initiator`
+- `action`
+- `type`
+- `time`
+- `target`
+- `changes`
+- `effects`
+- `status`
+- `text`
+
+(\*) always comes back
+
+## get
+
+Gets the notification associated with `id`.
+
+Params:
+
+- `id` : Notification ID
+- `fields` : List of fields (see `list`)
+- `raw` : Return the original message without optimizations
 
 # SUPPORT
 

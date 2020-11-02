@@ -1,7 +1,7 @@
-# Net::SecurityCenter::API
+# Net::SecurityCenter::Base
 # NAME
 
-Net::SecurityCenter::API - API Base Class for Net::Security::Center
+Net::SecurityCenter::Base - API Base Class for Net::Security::Center
 
 # SYNOPSIS
 
@@ -9,9 +9,11 @@ Net::SecurityCenter::API - API Base Class for Net::Security::Center
 
     my $sc = Net::SecurityCenter('sc.example.org');
 
-    $sc->login('secman', 'password');
+    if (! $sc->login('secman', 'password')) {
+        die $sc->error;
+    }
 
-    $scan->logout();
+    $sc->logout();
 
 # DESCRIPTION
 

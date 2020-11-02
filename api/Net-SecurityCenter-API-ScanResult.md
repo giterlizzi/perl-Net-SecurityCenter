@@ -53,8 +53,8 @@ Get list of scans results (completed, running, etc.).
 
     my $scans = $sc->list(
         start_date => '2020-01-01',
-        end_date => '2020-02-01',
-        fields => 'id,name,description,startTime,finishTime',
+        end_date   => '2020-02-01',
+        fields     => 'id,name,description,startTime,finishTime',
     );
 
 
