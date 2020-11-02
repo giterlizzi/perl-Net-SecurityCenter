@@ -1,46 +1,54 @@
-package Net::SecurityCenter::API::File;
+package App::TenableSC::Logger;
 
-use warnings;
 use strict;
+use warnings;
 
-use Carp;
-
-use parent 'Net::SecurityCenter::Base';
-
-use Net::SecurityCenter::Utils qw(:all);
+use Time::Piece;
 
 our $VERSION = '0.300';
 
 #-------------------------------------------------------------------------------
-# METHODS
+# CONSTRUCTOR
 #-------------------------------------------------------------------------------
 
-sub upload {
-
-    my ( $self, $file ) = @_;
-
-    ( @_ == 2 ) or croak( 'Usage: ' . __PACKAGE__ . '->upload( $FILE )' );
-
-    my $response = $self->client->upload($file);
-
-    return if ( !$response );
-    return $response->{filename};
-
+sub new {
+    my $class = shift;
+    return bless {}, $class;
 }
 
 #-------------------------------------------------------------------------------
 
-sub clear {
+sub log {
+    my ( $self, $level, $message ) = @_;
 
-    my ( $self, $file ) = @_;
+    my $now = Time::Piece->new->datetime;
+    print STDERR "[$now] [$$] $level - $message\n";
 
-    ( @_ == 2 ) or croak( 'Usage: ' . __PACKAGE__ . '->clear( $FILE )' );
+    return;
+}
 
-    my $response = $self->client->post( '/file/clear', { filename => $file } );
+#-------------------------------------------------------------------------------
 
-    return if ( !$response );
-    return 1;
+sub info {
+    return shift->log( 'INFO', shift );
+}
 
+#-------------------------------------------------------------------------------
+
+sub debug {
+    return shift->log( 'DEBUG', shift );
+}
+
+#-------------------------------------------------------------------------------
+
+sub warning {
+    return shift->log( 'WARNING', shift );
+}
+
+#-------------------------------------------------------------------------------
+
+sub error {
+    return shift->log( 'ERROR', shift );
 }
 
 #-------------------------------------------------------------------------------
@@ -55,26 +63,20 @@ __END__
 
 =head1 NAME
 
-Net::SecurityCenter::API::File - Perl interface to Tenable.sc (SecurityCenter) File REST API
+App::TenableSC::Logger - Simple Logger package for App::TenableSC
 
 
 =head1 SYNOPSIS
 
-    use Net::SecurityCenter::REST;
-    use Net::SecurityCenter::API::File;
+    use App::TenableSC::Logger;
 
-    my $sc = Net::SecurityCenter::REST->new('sc.example.org');
-
-    $sc->login('secman', 'password');
-
-    my $api = Net::SecurityCenter::API::File->new($sc);
-
-    $sc->logout();
+    my $logger = App::TenableSC::Logger->new;
+    $logger->debug('Hello, Tenable.sc');
 
 
 =head1 DESCRIPTION
 
-This module provides Perl scripts easy way to interface the File REST API of Tenable.sc
+This module provides Perl scripts easy way to interface the REST API of Tenable.sc
 (SecurityCenter).
 
 For more information about the Tenable.sc (SecurityCenter) REST API follow the online documentation:
@@ -82,26 +84,7 @@ For more information about the Tenable.sc (SecurityCenter) REST API follow the o
 L<https://docs.tenable.com/sccv/api/index.html>
 
 
-=head1 CONSTRUCTOR
-
-=head2 Net::SecurityCenter::API::File->new ( $client )
-
-Create a new instance of B<Net::SecurityCenter::API::File> using L<Net::SecurityCenter::REST> class.
-
-
 =head1 METHODS
-
-=head2 upload
-
-Uploads a File.
-
-    $sc->file->upload('/tmp/all-2.0.tar.gz');
-
-=head2 clear
-
-Removes the File associated with C<filename>.
-
-    $sc->file->clear('4fk1r0');
 
 
 =head1 SUPPORT
