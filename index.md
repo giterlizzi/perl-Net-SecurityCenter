@@ -12,7 +12,7 @@ Perl interface to *Tenable.sc* (SecurityCenter) REST API
  - [Net::SecurityCenter::Utils](api/Net-SecurityCenter-Utils.md)
  - [Net::SecurityCenter::REST](api/Net-SecurityCenter-REST.md)
 
- ## API
+## API
 
   - [Net::SecurityCenter::API::Analisys](api/Net-SecurityCenter-API-Analysis.md)
   - [Net::SecurityCenter::API::Credential](api/Net-SecurityCenter-API-Credential.md)
@@ -36,8 +36,8 @@ Perl interface to *Tenable.sc* (SecurityCenter) REST API
 ## App
 
   - [App::TenableSC](api/App-TenableSC.md)
-  - [App::TenableSC::Logger](api/App-TenableSC/Logger.md)
-  - [App::TenableSC::Utils](api/App-TenableSC/Utils.md)
+  - [App::TenableSC::Logger](api/App-TenableSC-Logger.md)
+  - [App::TenableSC::Utils](api/App-TenableSC-Utils.md)
 
 ### CLI applications
 
@@ -45,11 +45,11 @@ Perl interface to *Tenable.sc* (SecurityCenter) REST API
 
 Tenable.sc API command line interface (``sc-api``).
 
-  - [App::TenableSC::Utils](api/App-TenableSC/API.md)
+  - [App::TenableSC::Utils](api/App-TenableSC-API.md)
 
 
 
-## Examples
+## Example
 
 ```.pl
     use strict;
@@ -78,9 +78,8 @@ Tenable.sc API command line interface (``sc-api``).
 
 ## Read more
 
- - [API Reference](api.md)
  - [Install](install.md)
- - [ChangeLog](release.md)
+ - [ChangeLog](changes.md)
  - [Contributing](contributing.md)
  - [Examples](examples.md)
 
@@ -88,6 +87,7 @@ Tenable.sc API command line interface (``sc-api``).
 
 To install `Net::SecurityCenter` distribution, run the following commands:
 
+    cpanm --installdeps .
     perl Makefile.PL
     make
     make test
