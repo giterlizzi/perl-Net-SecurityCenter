@@ -43,9 +43,9 @@ Perl interface to *Tenable.sc* (SecurityCenter) REST API
 
 #### sc-api
 
-Tenable.sc API command line interface (``sc-api``).
+Tenable.sc API command line interface.
 
-  - [App::TenableSC::Utils](api/App-TenableSC-API.md)
+  - [App::TenableSC::API](api/App-TenableSC-API.md)
 
 
 
