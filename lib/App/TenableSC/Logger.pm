@@ -5,7 +5,7 @@ use warnings;
 
 use Time::Piece;
 
-our $VERSION = '0.300';
+our $VERSION = '0.310';
 
 #-------------------------------------------------------------------------------
 # CONSTRUCTOR

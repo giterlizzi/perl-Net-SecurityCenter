@@ -10,7 +10,7 @@ use parent 'App::TenableSC';
 
 use App::TenableSC::Utils qw(:all);
 
-our $VERSION = '0.300';
+our $VERSION = '0.310';
 
 @App::TenableSC::command_options = (
     'output|format|f=s',
@@ -139,8 +139,8 @@ sub startup {
                     } else {
                         my $value = $row->{$_};
 
-                        if ($self->options->{'format'} ne 'table') {
-                            $value = sprintf '"%s"', $value if ($value =~ /\n/ || $value =~ /\,/);
+                        if ( $self->options->{'format'} ne 'table' ) {
+                            $value = sprintf '"%s"', $value if ( $value =~ /\n/ || $value =~ /\,/ );
                             $value =~ s/\n/\r\n/g;
                         }
                         push @row, $value;
@@ -208,7 +208,7 @@ sub table {
 
     } else {
 
-        for my $i ( 0 .. @{ $rows->[0] } -1 ) {
+        for my $i ( 0 .. @{ $rows->[0] } - 1 ) {
             $widths->[$i] = 0;
         }
 

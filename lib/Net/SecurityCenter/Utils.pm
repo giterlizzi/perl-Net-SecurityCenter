@@ -9,7 +9,7 @@ use Time::Piece;
 use Data::Dumper ();
 use Exporter qw(import);
 
-our $VERSION = '0.300';
+our $VERSION = '0.310';
 
 our @EXPORT_OK = qw(
     sc_check_params

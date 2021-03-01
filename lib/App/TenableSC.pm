@@ -14,7 +14,7 @@ use App::TenableSC::Logger;
 
 use Net::SecurityCenter;
 
-our $VERSION = '0.300';
+our $VERSION = '0.310';
 
 my @global_options = (
     'help|h',

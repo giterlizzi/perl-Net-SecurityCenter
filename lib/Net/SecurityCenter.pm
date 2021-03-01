@@ -7,7 +7,7 @@ use parent 'Net::SecurityCenter::Base';
 
 use Net::SecurityCenter::REST;
 
-our $VERSION = '0.300';
+our $VERSION = '0.310';
 
 my @api = qw(
     analysis
@@ -26,6 +26,7 @@ my @api = qw(
     scanner
     status
     system
+    ticket
     user
     zone
 );

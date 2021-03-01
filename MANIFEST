@@ -30,7 +30,7 @@ lib/Net/SecurityCenter/REST.pm
 lib/Net/SecurityCenter/Utils.pm
 LICENSE
 Makefile.PL
-MANIFEST			This list of files
+MANIFEST
 README.md
 t/00-load.t
 t/10-rest.t

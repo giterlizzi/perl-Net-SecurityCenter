@@ -7,7 +7,7 @@ use parent 'Net::SecurityCenter::Base';
 
 use Net::SecurityCenter::Utils qw(:all);
 
-our $VERSION = '0.300';
+our $VERSION = '0.310';
 
 #-------------------------------------------------------------------------------
 # METHODS

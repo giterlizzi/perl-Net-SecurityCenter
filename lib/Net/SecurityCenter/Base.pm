@@ -3,7 +3,7 @@ package Net::SecurityCenter::Base;
 use warnings;
 use strict;
 
-our $VERSION = '0.300';
+our $VERSION = '0.310';
 
 #-------------------------------------------------------------------------------
 # CONSTRUCTOR

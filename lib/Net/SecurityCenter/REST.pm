@@ -12,7 +12,7 @@ use LWP::UserAgent;
 use Net::SecurityCenter::Error;
 use Net::SecurityCenter::Utils qw(trim dumper);
 
-our $VERSION = '0.300';
+our $VERSION = '0.310';
 our $ERROR;
 
 #-------------------------------------------------------------------------------

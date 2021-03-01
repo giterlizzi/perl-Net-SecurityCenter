@@ -153,6 +153,10 @@ See L<Net::SecurityCenter::API::Scanner> class.
 
 See L<Net::SecurityCenter::API::System> class.
 
+=head2 ticket
+
+See L<Net::SecurityCenter::API::Ticket> class.
+
 =head2 user
 
 See L<Net::SecurityCenter::API::User> class.
