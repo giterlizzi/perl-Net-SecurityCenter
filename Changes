@@ -1,5 +1,12 @@
 Revision history for Net::SecurityCenter
 
+0.310 2021-03-01
+    - Added "Net::SecurityCenter::API::Ticket" class
+    - Fixed "ssl_opts" param in "Net::SecurityCenter::REST"
+    - Added array return context in "Net::SecurityCenter::API::Scan->list"
+    - sc-api: Added Two-Way SSL/TLS Mutual Authentication
+    - sc-api: Improved CSV output (thanks to SFUX)
+
 0.300 2020-10-30
     - Added support for API Authentication (added in Tenable.sc 5.13)
     - Added "Net::SecurityCenter::API::Notification" class
