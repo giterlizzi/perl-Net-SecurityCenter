@@ -28,14 +28,28 @@ $sc->logout();
 
 ## Install
 
-To install `Net::SecurityCenter` distribution, run the following commands:
+Using Makefile.PL:
+
+To install `Net::SecurityCenter` distribution, run the following commands.
 
     perl Makefile.PL
     make
     make test
     make install
 
+Using App::cpanminus:
+
+    cpanm Net::SecurityCenter
+
+
+## Documentation
+
+ - `perldoc Net::SecurityCenter`
+ - https://metacpan.org/release/Net-SecurityCenter
+ - https://giterlizzi.github.io/perl-Net-SecurityCenter
+
+
 ## Copyright
 
- - Copyright 2018-2020 © Giuseppe Di Terlizzi
+ - Copyright 2018-2021 © Giuseppe Di Terlizzi
  - Nessus®, Tenable.sc® and SecurityCenter® is a Registered Trademark of Tenable®, Inc.
