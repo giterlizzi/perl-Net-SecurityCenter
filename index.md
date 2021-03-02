@@ -1,4 +1,4 @@
-[![Release](https://img.shields.io/github/release/giterlizzi/perl-Net-SecurityCenter.svg)](https://github.com/giterlizzi/perl-Net-SecurityCenter/releases) [![Build Status](https://travis-ci.org/giterlizzi/perl-Net-SecurityCenter.svg)](https://travis-ci.org/giterlizzi/perl-Net-SecurityCenter) [![License](https://img.shields.io/github/license/giterlizzi/perl-Net-SecurityCenter.svg)](https://github.com/giterlizzi/perl-Net-SecurityCenter) [![Starts](https://img.shields.io/github/stars/giterlizzi/perl-Net-SecurityCenter.svg)](https://github.com/giterlizzi/perl-Net-SecurityCenter) [![Forks](https://img.shields.io/github/forks/giterlizzi/perl-Net-SecurityCenter.svg)](https://github.com/giterlizzi/perl-Net-SecurityCenter) [![Issues](https://img.shields.io/github/issues/giterlizzi/perl-Net-SecurityCenter.svg)](https://github.com/giterlizzi/perl-Net-SecurityCenter/issues)
+[![Release](https://img.shields.io/github/release/giterlizzi/perl-Net-SecurityCenter.svg)](https://github.com/giterlizzi/perl-Net-SecurityCenter/releases) [![License](https://img.shields.io/github/license/giterlizzi/perl-Net-SecurityCenter.svg)](https://github.com/giterlizzi/perl-Net-SecurityCenter) [![Starts](https://img.shields.io/github/stars/giterlizzi/perl-Net-SecurityCenter.svg)](https://github.com/giterlizzi/perl-Net-SecurityCenter) [![Forks](https://img.shields.io/github/forks/giterlizzi/perl-Net-SecurityCenter.svg)](https://github.com/giterlizzi/perl-Net-SecurityCenter) [![Issues](https://img.shields.io/github/issues/giterlizzi/perl-Net-SecurityCenter.svg)](https://github.com/giterlizzi/perl-Net-SecurityCenter/issues)
 
 # Net::SecurityCenter
 
@@ -30,6 +30,7 @@ Perl interface to *Tenable.sc* (SecurityCenter) REST API
   - [Net::SecurityCenter::API::ScanResult](api/Net-SecurityCenter-API-ScanResult.md)
   - [Net::SecurityCenter::API::System](api/Net-SecurityCenter-API-System.md)
   - [Net::SecurityCenter::API::Status](api/Net-SecurityCenter-API-Status.md)
+  - [Net::SecurityCenter::API::Ticket](api/Net-SecurityCenter-API-Ticket.md)
   - [Net::SecurityCenter::API::User](api/Net-SecurityCenter-API-User.md)
   - [Net::SecurityCenter::API::Zone](api/Net-SecurityCenter-API-Zone.md)
 
@@ -95,5 +96,5 @@ To install `Net::SecurityCenter` distribution, run the following commands:
 
 ## Copyright
 
- - Copyright 2018-2020 © Giuseppe Di Terlizzi
+ - Copyright 2018-2021 © Giuseppe Di Terlizzi
  - Nessus®, Tenable.sc® and SecurityCenter® is a Registered Trademark of Tenable®, Inc.

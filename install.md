@@ -7,13 +7,18 @@ that should be provided before the module is installed.
 
 ## INSTALLATION
 
-To install this module, run the following commands:
+Using Makefile.PL:
 
-    cpanm --installdeps .
+To install this module, run the following commands.
+
     perl Makefile.PL
     make
     make test
     make install
+
+Using App::cpanminus:
+
+    cpanm Net::SecurityCenter
 
 ## SUPPORT AND DOCUMENTATION
 
@@ -40,6 +45,7 @@ perldoc command.
     perldoc Net::SecurityCenter::API::ScanResult
     perldoc Net::SecurityCenter::API::Scanner
     perldoc Net::SecurityCenter::API::System
+    perldoc Net::SecurityCenter::API::Ticket
     perldoc Net::SecurityCenter::API::User
     perldoc Net::SecurityCenter::API::Zone
 
@@ -58,7 +64,7 @@ You can also look for information at:
 
 ## LICENSE AND COPYRIGHT
 
-Copyright (C) 2018-2020 Giuseppe Di Terlizzi
+Copyright (C) 2018-2021 Giuseppe Di Terlizzi
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the the Artistic License (2.0). You may obtain a

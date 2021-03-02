@@ -1,25 +1,32 @@
 # Revision history for Net::SecurityCenter
 
+## 0.310 2021-03-01
+  - Added `Net::SecurityCenter::API::Ticket` class
+  - Fixed `ssl_opts` param in `Net::SecurityCenter::REST`
+  - Added array return context in `Net::SecurityCenter::API::Scan->list`
+  - sc-api: Added Two-Way SSL/TLS Mutual Authentication
+  - sc-api: Improved CSV output (thanks to SFUX)
+
 ## 0.300 2020-10-30
   - Added support for API Authentication (added in Tenable.sc 5.13)
-  - Added ``Net::SecurityCenter::API::Notification`` class
-  - Added ``App:TenableSC`` class for CLI applications
-  - Improved ``sc-api`` table output
-  - Added supporto for API Authentication in ``sc-api``
+  - Added `Net::SecurityCenter::API::Notification` class
+  - Added `App:TenableSC` class for CLI applications
+  - Improved `sc-api` table output
+  - Added support for API Authentication in `sc-api`
   - Improved error handling
   - Improved documentations
   - Improved Perl magic features (wantarray)
   - Code beautifications
 
 ## 0.206 2020-07-22
-  - Refactoring ``Net::SecurityCenter`` class
-  - Added ``Net::SecurityCenter::API::Status`` class
-  - Added ``Net::SecurityCenter::API::DeviceInfo`` class (added in Tenable.sc 5.12)
-  - Added ``Net::SecurityCenter::API::System->debug`` method (added in Tenable.sc 5.10)
-  - Deprecated ``Net::SecurityCenter::API::System->get_status`` method
-  - Deprecated ``Net::SecurityCenter::API::System->get_info`` method
-  - Improved ``Net::SecurityCenter::API::ScanResult->list`` method (added ``start_time`` and ``end_time`` params)
-  - Fixed unhexpected behavior in ``Net::SecurityCenter::API::ScanResult->list`` method for ``start_date`` and ``end_date`` params
+  - Refactoring `Net::SecurityCenter` class
+  - Added `Net::SecurityCenter::API::Status` class
+  - Added `Net::SecurityCenter::API::DeviceInfo` class (added in Tenable.sc 5.12)
+  - Added `Net::SecurityCenter::API::System->debug` method (added in Tenable.sc 5.10)
+  - Deprecated `Net::SecurityCenter::API::System->get_status` method
+  - Deprecated `Net::SecurityCenter::API::System->get_info` method
+  - Improved `Net::SecurityCenter::API::ScanResult->list` method (added `start_time` and `end_time` params)
+  - Fixed unhexpected behavior in `Net::SecurityCenter::API::ScanResult->list` method for `start_date` and `end_date` params
   - Improved sc-api command
   - Improved documentations
   - Added more tests
@@ -29,20 +36,20 @@
       - import
       - reimport
       - email
-  - Improved Net::SecurityCenter::API::ScanResult->stop method (added ``type=>import``)
+  - Improved Net::SecurityCenter::API::ScanResult->stop method (added `type=>import`)
 
 ## 0.204 2019-11-06
-  - Removed ``List::Util`` dependency (fix Bug #130874)
+  - Removed `List::Util` dependency (fix Bug #130874)
 
 ## 0.203 2019-10-29
   - Added initial support for Tenable.sc 5.12
-  - Added ``Net::SecurityCenter::API::Scanner::health`` method
-  - Renamed ``Net::SecurityCenter::API::Scanner->get_status`` method to ``Net::SecurityCenter::API::Scanner->status``
-  - Renamed ``Net::SecurityCenter::API::ScanResult->get_status`` method to ``Net::SecurityCenter::API::ScanResult->status``
-  - Renamed ``Net::SecurityCenter::API::ScanResult->get_progress`` method to ``Net::SecurityCenter::API::ScanResult->progress``
+  - Added `Net::SecurityCenter::API::Scanner::health` method
+  - Renamed `Net::SecurityCenter::API::Scanner->get_status` method to `Net::SecurityCenter::API::Scanner->status`
+  - Renamed `Net::SecurityCenter::API::ScanResult->get_status` method to `Net::SecurityCenter::API::ScanResult->status`
+  - Renamed `Net::SecurityCenter::API::ScanResult->get_progress` method to `Net::SecurityCenter::API::ScanResult->progress`
 
 ## 0.202 2019-09-10
-  - Added ``download`` method for Analysis API
+  - Added `download` method for Analysis API
 
 ## 0.201 2019-07-12
   - Fixed documentation issue
@@ -68,7 +75,7 @@
     - Zone
   - Improved documentation
   - Improved test suite
-  - Added support for ``Log::Log4perl``, ``Log::Any`` and ``Mojo::Log`` logging modules
+  - Added support for `Log::Log4perl`, `Log::Any` and `Mojo::Log` logging modules
  
 ## 0.100 2018-12-28
   - initial release

@@ -100,7 +100,7 @@ public review and contribution under the terms of the license.
 
 # LICENSE AND COPYRIGHT
 
-This software is copyright (c) 2018-2020 by Giuseppe Di Terlizzi.
+This software is copyright (c) 2018-2021 by Giuseppe Di Terlizzi.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
